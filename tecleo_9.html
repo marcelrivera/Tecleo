@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tecleo — Curso de mecanografía</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1B1F23;
+  --panel:#23282D;
+  --panel-alt:#2B3137;
+  --paper:#E8E6E1;
+  --paper-dim:#B8BCC1;
+  --muted:#8B939B;
+  --brass:#C9A15C;
+  --brick:#C4634A;
+  --sage:#6B9B7C;
+  --blue:#5B8DBF;
+  --border:#3A4149;
+  --shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+body.light{
+  --bg:#F2EFE9;
+  --panel:#FFFFFF;
+  --panel-alt:#F6F4EF;
+  --paper:#262B30;
+  --paper-dim:#4A5157;
+  --muted:#7A7267;
+  --brass:#9C7A3C;
+  --brick:#B5503A;
+  --sage:#3F7A54;
+  --blue:#3D6B96;
+  --border:#DCD6C9;
+  --shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--bg) 90%, white 10%) 0%, var(--bg) 45%),
+    var(--bg);
+  color:var(--paper);
+  font-family:'IBM Plex Sans', sans-serif;
+  min-height:100vh;
+  transition:background 0.2s ease, color 0.2s ease;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:28px 32px 10px 32px;
+}
+.brand-left{display:flex; align-items:baseline; gap:14px;}
+.brand h1{
+  font-family:'Special Elite', cursive;
+  font-size:2rem;
+  letter-spacing:1px;
+  margin:0;
+  color:var(--brass);
+}
+.brand span{
+  color:var(--muted);
+  font-size:0.85rem;
+  letter-spacing:0.5px;
+}
+.theme-toggle{
+  font-family:'IBM Plex Sans', sans-serif;
+  font-size:0.78rem;
+  font-weight:600;
+  padding:8px 14px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--paper);
+  cursor:pointer;
+}
+.theme-toggle:hover{border-color:var(--brass);}
+.layout{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:24px;
+  padding:0 32px 40px 32px;
+  align-items:start;
+}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;}
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  position:sticky;
+  top:20px;
+}
+.sidebar h2{
+  font-size:0.75rem;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  color:var(--muted);
+  margin:0;
+  padding:16px 18px 10px 18px;
+  border-bottom:1px solid var(--border);
+}
+.lesson-list{
+  list-style:none;
+  margin:0;
+  padding:8px;
+  max-height:70vh;
+  overflow-y:auto;
+}
+.lesson-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 10px;
+  border-radius:7px;
+  cursor:pointer;
+  color:var(--paper-dim);
+  font-size:0.88rem;
+  transition:background 0.15s ease;
+}
+.lesson-item:hover{background:var(--panel-alt);}
+.lesson-item.active{
+  background:var(--panel-alt);
+  color:var(--paper);
+  box-shadow:inset 3px 0 0 var(--brass);
+}
+.lesson-num{
+  width:22px;height:22px;
+  border-radius:5px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.72rem;
+  color:var(--muted);
+  flex:none;
+}
+.lesson-item.done .lesson-num{
+  background:var(--sage);
+  border-color:var(--sage);
+  color:#152018;
+}
+.lesson-item.active .lesson-num{
+  border-color:var(--brass);
+  color:var(--brass);
+}
+
+/* ---------- Main panel ---------- */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:26px 30px 30px 30px;
+}
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:18px;
+}
+.panel-head h3{
+  margin:0 0 6px 0;
+  font-size:1.25rem;
+  color:var(--paper);
+}
+.panel-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:0.88rem;
+  max-width:52ch;
+}
+
+/* Keycap stats */
+.stats{
+  display:flex;
+  gap:12px;
+  flex:none;
+}
+.keycap{
+  width:76px;
+  padding:10px 4px 8px 4px;
+  text-align:center;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--panel-alt) 85%, white 15%), var(--panel-alt));
+  border:1px solid var(--border);
+  border-bottom:3px solid color-mix(in srgb, var(--border) 60%, black 20%);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+}
+.keycap .val{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:1.15rem;
+  font-weight:600;
+  color:var(--brass);
+}
+.keycap .lbl{
+  display:block;
+  margin-top:2px;
+  font-size:0.6rem;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* Progress bar */
+.progress-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+.progress-wrap{
+  flex:1;
+  height:8px;
+  border-radius:5px;
+  background:var(--panel-alt);
+  border:1px solid var(--border);
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--brass), var(--sage));
+  transition:width 0.15s ease;
+}
+.progress-pct{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.75rem;
+  color:var(--muted);
+  min-width:34px;
+  text-align:right;
+}
+.reset-btn{
+  font-family:'IBM Plex Sans', sans-serif;
+  font-size:0.75rem;
+  font-weight:600;
+  padding:7px 12px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:var(--panel-alt);
+  color:var(--paper-dim);
+  cursor:pointer;
+  white-space:nowrap;
+}
+.reset-btn:hover{border-color:var(--brick); color:var(--brick);}
+
+/* Typing field */
+.type-field{
+  background:var(--panel-alt);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:22px 24px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:1.15rem;
+  line-height:1.9;
+  letter-spacing:0.5px;
+  height:318px;
+  overflow-y:auto;
+  cursor:text;
+  position:relative;
+}
+#textDisplay{display:block;}
+.typing-line{
+  min-height:2.05em;
+  padding:0 7px;
+  border-left:3px solid transparent;
+  border-radius:4px;
+  white-space:pre;
+  transition:background 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+}
+.typing-line.pending{opacity:0.52;}
+.typing-line.done{opacity:0.38;}
+.line-num{
+  display:inline-block;
+  width:2.5em;
+  margin-right:8px;
+  text-align:right;
+  color:var(--muted);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.7em;
+  opacity:0.65;
+  user-select:none;
+  vertical-align:baseline;
+}
+.typing-line.active .line-num{color:var(--brass);opacity:0.9;}
+.typing-line.active{
+  opacity:1;
+  background:color-mix(in srgb, var(--brass) 13%, transparent);
+  border-left-color:var(--brass);
+}
+.type-field.focused{border-color:var(--brass);}
+.type-field.shake{animation:shake 0.28s ease;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-6px);}
+  40%{transform:translateX(5px);}
+  60%{transform:translateX(-4px);}
+  80%{transform:translateX(3px);}
+}
+.ch{color:var(--paper-dim);}
+.ch.correct{color:var(--sage);}
+.ch.current{
+  background:var(--brass);
+  color:#1B1F23;
+  border-radius:2px;
+}
+.ch.blocked{
+  background:var(--brick);
+  color:#fff;
+  border-radius:2px;
+}
+.hidden-input{
+  position:absolute;
+  top:0;
+  left:0;
+  opacity:0;
+  pointer-events:none;
+}
+.hint{
+  margin-top:10px;
+  font-size:0.78rem;
+  color:var(--muted);
+}
+.hint.error{color:var(--brick); font-weight:600;}
+
+/* Result banner */
+.result{
+  margin-top:16px;
+  padding:14px 18px;
+  border-radius:8px;
+  background:var(--panel-alt);
+  border:1px solid var(--sage);
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.result.show{display:flex;}
+.result .msg{font-size:0.92rem;color:var(--paper);}
+.result .msg b{color:var(--sage);}
+.btnrow{display:flex;gap:10px;}
+button{
+  font-family:'IBM Plex Sans', sans-serif;
+  font-size:0.82rem;
+  font-weight:600;
+  padding:9px 16px;
+  border-radius:7px;
+  border:1px solid var(--border);
+  background:var(--panel-alt);
+  color:var(--paper);
+  cursor:pointer;
+  transition:transform 0.1s ease, border-color 0.15s ease;
+}
+button:hover{border-color:var(--brass); transform:translateY(-1px);}
+button.primary{
+  background:var(--brass);
+  border-color:var(--brass);
+  color:#1B1F23;
+}
+button.primary:hover{border-color:color-mix(in srgb, var(--brass) 70%, white 30%);}
+button:disabled{opacity:0.42; cursor:not-allowed; transform:none; border-color:var(--border);}
+
+/* Keyboard */
+.keyboard{
+  margin-top:26px;
+  padding-top:18px;
+  border-top:1px solid var(--border);
+}
+.keyboard h4{
+  margin:0 0 12px 0;
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  color:var(--muted);
+}
+.kb-row{
+  display:flex;
+  gap:6px;
+  margin-bottom:6px;
+  justify-content:center;
+}
+.key{
+  min-width:34px;
+  height:34px;
+  border-radius:6px;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--panel-alt) 80%, white 20%), var(--panel-alt));
+  border:1px solid var(--border);
+  border-bottom:2px solid color-mix(in srgb, var(--border) 60%, black 20%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.78rem;
+  color:var(--paper-dim);
+  text-transform:uppercase;
+  transition:transform 0.08s ease, box-shadow 0.15s ease;
+}
+.key.wide{min-width:58px;font-size:0.62rem;text-transform:none;}
+.key.space{min-width:280px;}
+.key.active{
+  transform:translateY(2px);
+  box-shadow:0 0 0 2px var(--kcolor, var(--brass)) inset;
+  color:#1B1F23;
+  background:var(--kcolor, var(--brass));
+}
+.key.error{
+  background:var(--brick) !important;
+  color:#fff;
+  box-shadow:0 0 0 2px var(--brick) inset;
+}
+.finger-note{
+  text-align:center;
+  margin-top:10px;
+  font-size:0.78rem;
+  color:var(--muted);
+}
+.finger-note b{color:var(--brass);}
+.finger-note.error{color:var(--brick);}
+.finger-note.error b{color:var(--brick);}
+
+footer{
+  text-align:center;
+  padding:18px;
+  color:var(--muted);
+  font-size:0.75rem;
+}
+
+/* ---------- Native macOS / iOS visual refresh ---------- */
+:root{
+  --bg:#111827;
+  --panel:rgba(30,41,59,0.72);
+  --panel-alt:rgba(51,65,85,0.54);
+  --paper:#f8fafc;
+  --paper-dim:#cbd5e1;
+  --muted:#94a3b8;
+  --brass:#fbbf24;
+  --brick:#fb7185;
+  --sage:#34d399;
+  --blue:#60a5fa;
+  --accent:#0a84ff;
+  --border:rgba(148,163,184,0.22);
+  --shadow:0 20px 46px rgba(0,0,0,0.24);
+}
+body.light{
+  --bg:#f4f7fb;
+  --panel:rgba(255,255,255,0.72);
+  --panel-alt:rgba(241,245,249,0.82);
+  --paper:#182230;
+  --paper-dim:#4b5a6b;
+  --muted:#6b7280;
+  --brass:#b7791f;
+  --brick:#e5484d;
+  --sage:#16805a;
+  --blue:#007aff;
+  --accent:#007aff;
+  --border:rgba(100,116,139,0.18);
+  --shadow:0 20px 45px rgba(15,23,42,0.10);
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,sans-serif;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(96,165,250,0.23), transparent 32rem),
+    radial-gradient(circle at 100% 15%, rgba(167,139,250,0.18), transparent 28rem),
+    var(--bg);
+  letter-spacing:-0.01em;
+}
+.brand{max-width:1360px;margin:0 auto;padding:26px 32px 16px;}
+.brand-left{gap:12px;align-items:center;}
+.brand h1{font-family:inherit;font-size:1.55rem;font-weight:780;letter-spacing:-0.055em;color:var(--paper);}
+.brand h1::before{content:"⌨";display:inline-grid;place-items:center;width:30px;height:30px;margin-right:9px;border-radius:9px;background:var(--accent);color:white;font-size:0.95rem;vertical-align:2px;letter-spacing:0;}
+.brand span{font-size:0.82rem;letter-spacing:0;color:var(--muted);}
+.theme-toggle{font-family:inherit;font-size:0.78rem;padding:9px 13px;border-radius:999px;background:var(--panel);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:0 2px 8px rgba(15,23,42,0.06);}
+.theme-toggle:hover{border-color:var(--accent);}
+.layout{max-width:1360px;margin:0 auto;grid-template-columns:280px minmax(0,1fr);gap:20px;padding:0 32px 42px;}
+.sidebar,.panel{background:var(--panel);border-color:var(--border);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:var(--shadow);}
+.sidebar{top:18px;border-radius:20px;}
+.sidebar h2{font-size:0.7rem;letter-spacing:0.09em;padding:19px 18px 7px;border:0;}
+.progress-summary{margin:0;padding:0 18px 13px;color:var(--muted);font-size:0.77rem;border-bottom:1px solid var(--border);}
+.lesson-list{padding:9px;max-height:68vh;}
+.lesson-item{gap:11px;padding:10px;border-radius:11px;font-size:0.86rem;transition:background .18s ease,color .18s ease,transform .18s ease;}
+.lesson-item:hover{background:rgba(148,163,184,0.12);transform:translateX(2px);}
+.lesson-item.active{background:color-mix(in srgb,var(--accent) 13%,transparent);box-shadow:none;color:var(--paper);}
+.lesson-item.locked{opacity:0.42;cursor:not-allowed;}
+.lesson-item.locked:hover{background:transparent;transform:none;}
+.lesson-item.locked .lesson-num{font-size:0.64rem;}
+.lesson-num{width:25px;height:25px;border-radius:50%;font-family:inherit;font-size:0.7rem;background:rgba(148,163,184,0.08);}
+.lesson-item.done .lesson-num{background:var(--sage);border-color:var(--sage);color:white;}
+.lesson-item.active .lesson-num{border-color:var(--accent);color:var(--accent);}
+.panel{border-radius:24px;padding:30px;}
+.panel-head{gap:24px;margin-bottom:22px;flex-wrap:wrap;}
+.panel-head h3{font-size:1.5rem;letter-spacing:-0.035em;margin-bottom:7px;}
+.panel-head p{font-size:0.9rem;line-height:1.45;}
+.stats{gap:8px;}
+.keycap{width:68px;padding:11px 4px 10px;background:rgba(255,255,255,0.12);border-radius:15px;border-color:var(--border);border-bottom-width:1px;box-shadow:0 5px 12px rgba(15,23,42,0.07);}
+.keycap .val{font-family:inherit;font-size:1.15rem;letter-spacing:-0.04em;color:var(--paper);}
+.keycap .lbl{font-size:0.58rem;letter-spacing:0.08em;}
+.progress-row{gap:11px;margin-bottom:15px;}
+.progress-wrap{height:10px;border:0;background:rgba(148,163,184,0.18);box-shadow:inset 0 1px 2px rgba(15,23,42,0.10);}
+.progress-bar{background:linear-gradient(90deg,var(--accent),#5ac8fa);border-radius:inherit;}
+.progress-pct{font-family:inherit;font-weight:650;font-size:0.77rem;color:var(--paper-dim);}
+.reset-btn{font-family:inherit;padding:8px 12px;border-radius:10px;background:rgba(148,163,184,0.10);}
+.type-field{background:rgba(15,23,42,0.04);border-color:var(--border);border-radius:18px;padding:18px 20px;font-size:1.02rem;line-height:1.85;box-shadow:inset 0 1px 1px rgba(15,23,42,0.04);}
+body:not(.light) .type-field{background:rgba(15,23,42,0.25);}
+.type-field.focused{border-color:color-mix(in srgb,var(--accent) 65%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 15%,transparent),inset 0 1px 1px rgba(15,23,42,0.04);}
+.typing-line{padding:0 10px;border-left-width:3px;border-radius:8px;}
+.typing-line.active{background:color-mix(in srgb,var(--accent) 11%,transparent);border-left-color:var(--accent);}
+.ch.current{background:var(--accent);color:#fff;border-radius:4px;box-shadow:0 2px 5px color-mix(in srgb,var(--accent) 35%,transparent);}
+.hint{font-size:0.78rem;padding-left:3px;}
+.result{padding:15px 17px;border-radius:15px;background:color-mix(in srgb,var(--sage) 8%,var(--panel-alt));border-color:color-mix(in srgb,var(--sage) 55%,transparent);}
+.btnrow{gap:8px;}
+button{font-family:inherit;font-size:0.8rem;padding:9px 15px;border-radius:10px;background:rgba(148,163,184,0.10);transition:transform .16s ease,background .16s ease,box-shadow .16s ease;}
+button:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 5px 12px rgba(15,23,42,0.10);}
+button.primary{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 5px 12px color-mix(in srgb,var(--accent) 26%,transparent);}
+button.primary:hover{border-color:var(--accent);}
+.keyboard{margin-top:27px;padding-top:21px;}
+.keyboard h4{letter-spacing:0.09em;}
+.key{height:36px;min-width:36px;border-radius:9px;background:rgba(255,255,255,0.16);border-bottom-width:1px;box-shadow:0 2px 3px rgba(15,23,42,0.07);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+body:not(.light) .key{background:rgba(255,255,255,0.08);}
+.key.active{color:white;background:var(--kcolor,var(--accent));box-shadow:0 0 0 2px var(--kcolor,var(--accent)) inset;}
+.finger-note{font-size:0.78rem;}
+footer{padding:0 20px 24px;font-size:0.72rem;}
+@media (max-width:860px){
+  .brand,.layout{padding-left:16px;padding-right:16px;}
+  .brand{padding-top:18px;}
+  .brand span{display:none;}
+  .sidebar{position:static;}
+  .lesson-list{max-height:230px;}
+  .panel{padding:21px 16px;border-radius:20px;}
+  .panel-head{flex-direction:column;}
+  .stats{width:100%;}
+  .keycap{flex:1;}
+  .key.space{min-width:150px;}
+  .type-field{padding:14px 12px;font-size:0.88rem;}
+}
+
+/* ---------- Extended practice controls ---------- */
+.brand-actions{display:flex;align-items:center;gap:8px;}
+.user-chip{padding:8px 11px;border:1px solid var(--border);border-radius:999px;background:var(--panel);color:var(--paper-dim);font-size:0.78rem;font-weight:650;backdrop-filter:blur(20px);}
+.logout-btn,.pause-btn{font-family:inherit;padding:8px 12px;border-radius:10px;background:rgba(148,163,184,0.10);white-space:nowrap;}
+.pause-btn{color:var(--accent);}
+.pause-btn:not(:disabled):hover{border-color:var(--accent);}
+.type-field{height:218px;padding:14px 20px;font-size:1.15rem;line-height:1.85;}
+.type-field.paused{cursor:default;filter:saturate(0.72);}
+.type-field-shell{position:relative;}
+.pause-overlay{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:none;
+  place-items:center;
+  border-radius:18px;
+  background:color-mix(in srgb,var(--panel) 78%,transparent);
+  color:var(--paper);
+  font-family:inherit;
+  font-size:1rem;
+  font-weight:750;
+  letter-spacing:0.01em;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  pointer-events:none;
+}
+.pause-overlay.show{display:grid;}
+.typing-line{min-height:2.05em;}
+.kb-row{gap:8px;margin-bottom:8px;}
+.key{min-width:45px;height:45px;border-radius:11px;font-size:0.86rem;}
+.key.wide{min-width:74px;font-size:0.68rem;}
+.key.space{min-width:360px;}
+.auth-overlay{position:fixed;z-index:10;inset:0;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,0.42);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:opacity .22s ease,visibility .22s ease;}
+.auth-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.auth-card{width:min(100%,390px);padding:30px;border:1px solid var(--border);border-radius:24px;background:var(--panel);box-shadow:0 24px 70px rgba(15,23,42,0.28);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);}
+.macos-close{
+  position:absolute;
+  top:18px;
+  left:18px;
+  width:13px;
+  height:13px;
+  padding:0;
+  border-radius:50%;
+  background:#ff5f57;
+  border:1px solid #e0443e;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+}
+.macos-close span{
+  font-size:8px;
+  line-height:1;
+  color:#7a0000;
+  opacity:0;
+  transition:opacity .1s ease;
+  transform:translateY(-0.5px);
+}
+.macos-close:hover span{opacity:1;}
+.macos-close:active{background:#e0443e;}
+.auth-icon{display:grid;place-items:center;width:44px;height:44px;margin-bottom:17px;border-radius:14px;background:var(--accent);color:white;font-size:1.3rem;}
+.auth-card h2{margin:0 0 7px;font-size:1.35rem;letter-spacing:-0.035em;}
+.auth-card p{margin:0 0 20px;color:var(--muted);font-size:0.86rem;line-height:1.45;}
+.auth-card label{display:grid;gap:6px;margin:13px 0;color:var(--paper-dim);font-size:0.78rem;font-weight:650;}
+.auth-card input{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:11px;background:rgba(148,163,184,0.10);color:var(--paper);font:inherit;outline:none;}
+.auth-card input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 15%,transparent);}
+.auth-card .auth-message{min-height:1.25em;margin:15px 0 13px;font-size:0.76rem;}
+.auth-card .auth-message.error{color:var(--brick);}
+.auth-submit{width:100%;}
+@media (max-width:860px){
+  .user-chip{display:none;}
+  .type-field{height:185px;padding:12px;font-size:0.98rem;}
+  .kb-row{gap:4px;margin-bottom:4px;}
+  .key{min-width:31px;height:36px;border-radius:8px;font-size:0.72rem;}
+  .key.wide{min-width:47px;font-size:0.56rem;}
+  .key.space{min-width:160px;}
+}
+
+/* ---------- Three-line studio and compact Apple-style keyboard ---------- */
+.practice-grid{display:grid;grid-template-columns:minmax(0,1fr) 158px;gap:22px;align-items:start;}
+.panel-head{margin-bottom:18px;}
+.stats-column{padding-left:18px;border-left:1px solid var(--border);}
+.stats-column h4{margin:2px 0 10px;color:var(--muted);font-size:0.66rem;letter-spacing:.1em;text-transform:uppercase;}
+.stats-column .stats{display:grid;grid-template-columns:1fr;gap:8px;}
+.stats-column .keycap{width:100%;min-height:58px;display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-radius:11px;}
+.stats-column .keycap .val{font-size:1.04rem;order:2;}
+.stats-column .keycap .lbl{margin:0;font-size:.58rem;order:1;text-align:left;}
+.type-field{height:166px;padding:12px 18px;font-size:1.31rem;line-height:1.78;}
+.typing-line{min-height:2.05em;padding:0 11px;}
+.keyboard{overflow-x:auto;padding:12px;border:1px solid #858b91;border-radius:11px;background:linear-gradient(180deg,#f3f4f4,#d8dbdc);box-shadow:0 8px 18px rgba(15,23,42,.12),inset 0 1px 0 rgba(255,255,255,.85);}
+.keyboard h4{color:#4b5563;margin:0 0 10px;font-size:.67rem;}
+.keyboard #kbRows{min-width:640px;}
+.keyboard{display:flex;flex-direction:column;}
+.finger-note{
+  display:block;
+  position:static;
+  min-height:1.3em;
+  margin-top:14px;
+  line-height:1.4;
+}
+.kb-row{gap:5px;margin-bottom:5px;justify-content:flex-start;}
+.key{min-width:43px;height:41px;border:1px solid #a2a7ab;border-radius:5px;background:linear-gradient(180deg,#fff,#eff0f0);box-shadow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 1px rgba(15,23,42,.24);color:#2f3438;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;font-size:.77rem;font-weight:500;}
+body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3438;}
+.key.function{height:27px;min-width:43px;border-radius:4px;font-size:.57rem;color:#555b60;background:linear-gradient(180deg,#fbfbfb,#e7e9e9);}
+.key.wide{min-width:76px;font-size:.63rem;}
+.key.tab{min-width:62px;}
+.key.caps{min-width:75px;}
+.key.return{min-width:83px;}
+.key.shift{min-width:97px;}
+.key.space{min-width:300px;}
+.key.command{min-width:60px;font-size:.58rem;}
+.key.arrow{min-width:30px;font-size:.68rem;}
+/* ---- Feedback dashboard: KPIs ---- */
+.feedback-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0 22px;}
+.chart-tooltip{
+  position:fixed;
+  z-index:200;
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--paper);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:0.74rem;
+  padding:6px 10px;
+  border-radius:7px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.28);
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-2px);
+  transition:opacity .08s ease;
+  white-space:nowrap;
+}
+.chart-tooltip.show{opacity:1;visibility:visible;}
+.feedback-filter-row{display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap;}
+.feedback-filter-btn{
+  font-family:'IBM Plex Sans', sans-serif;
+  font-size:0.75rem;
+  font-weight:600;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--panel-alt);
+  color:var(--muted);
+  cursor:pointer;
+  transition:background .12s ease,color .12s ease,border-color .12s ease;
+}
+.feedback-filter-btn:hover{border-color:var(--accent);color:var(--paper);}
+.feedback-filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.feedback-record{border-color:var(--brass);background:color-mix(in srgb, var(--brass) 8%, var(--panel-alt));}
+.feedback-record h3{color:var(--brass);}
+.feedback-kpi{background:var(--panel-alt);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:left;}
+.feedback-kpi .kpi-val{font-family:'IBM Plex Mono', monospace;font-size:1.3rem;font-weight:700;color:var(--brass);}
+.feedback-kpi .kpi-lbl{display:block;margin-top:2px;font-size:0.66rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);}
+
+/* ---- Sections ---- */
+.feedback-section{background:var(--panel-alt);border:1px solid var(--border);border-radius:12px;padding:18px 20px 20px;margin-bottom:18px;text-align:left;}
+.feedback-section h3{margin:0 0 4px;font-size:1rem;color:var(--paper);}
+.feedback-section-desc{margin:0 0 14px;font-size:0.8rem;color:var(--muted);max-width:70ch;}
+.feedback-subgrid{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start;}
+@media (max-width:760px){.feedback-subgrid{grid-template-columns:1fr;}}
+.feedback-substats{display:flex;flex-direction:column;gap:10px;}
+.feedback-stat-line{display:flex;justify-content:space-between;gap:10px;font-size:0.82rem;padding:8px 10px;background:var(--panel);border:1px solid var(--border);border-radius:8px;}
+.feedback-stat-line b{color:var(--brass);font-family:'IBM Plex Mono', monospace;}
+.feedback-chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;}
+.feedback-chart-legend{display:flex;gap:14px;margin-top:8px;font-size:0.72rem;color:var(--muted);}
+.feedback-chart-legend span{display:inline-flex;align-items:center;gap:5px;}
+.feedback-chart-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+.feedback-row{display:flex;justify-content:space-between;gap:10px;font-size:0.78rem;padding:7px 2px;border-bottom:1px solid var(--border);color:var(--paper);}
+.feedback-row:last-child{border-bottom:none;}
+.feedback-row span:last-child{color:var(--muted);white-space:nowrap;text-align:right;}
+
+.feedback-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:0.78rem;}
+.feedback-bar-label{width:60px;font-family:'IBM Plex Mono', monospace;text-transform:uppercase;color:var(--paper);flex:none;}
+.feedback-bar-track{flex:1;height:9px;border-radius:5px;background:var(--panel);border:1px solid var(--border);overflow:hidden;}
+.feedback-bar-fill{height:100%;background:linear-gradient(90deg,var(--brick),var(--brass));}
+.feedback-bar-count{width:64px;text-align:right;color:var(--muted);font-size:0.72rem;flex:none;}
+.feedback-muted{color:var(--muted);font-size:0.82rem;}
+
+/* ---- Per-lesson detail grid ---- */
+.feedback-lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;}
+.feedback-lesson-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .12s ease,transform .12s ease;}
+.feedback-lesson-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.feedback-lesson-card.empty{opacity:0.55;}
+.feedback-lesson-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.feedback-lesson-head .num{font-family:'IBM Plex Mono', monospace;font-size:0.72rem;color:var(--muted);}
+.feedback-lesson-title{font-size:0.82rem;font-weight:600;color:var(--paper);line-height:1.3;margin:2px 0 0;}
+.feedback-badge{flex:none;font-size:0.64rem;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.feedback-badge.pass{background:color-mix(in srgb,var(--sage) 20%,transparent);color:var(--sage);}
+.feedback-badge.fail{background:color-mix(in srgb,var(--brick) 18%,transparent);color:var(--brick);}
+.feedback-badge.none{background:var(--panel-alt);color:var(--muted);}
+.feedback-lesson-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;font-size:0.72rem;color:var(--muted);margin-bottom:8px;}
+.feedback-lesson-stats b{color:var(--paper);font-family:'IBM Plex Mono', monospace;}
+.feedback-attempt-list{display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--border);padding-top:7px;}
+.feedback-attempt-row{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);}
+.feedback-attempt-row .ok{color:var(--sage);}
+.feedback-attempt-row .no{color:var(--brick);}
+.key.active{color:white;background:var(--kcolor,var(--accent));border-color:var(--kcolor,var(--accent));box-shadow:0 0 0 2px var(--kcolor,var(--accent)) inset;}
+.finger-note{color:#5d6670;}
+.finger-note b{color:#3f4b58;}
+@media (max-width:980px){
+  .practice-grid{grid-template-columns:1fr;}
+  .stats-column{padding:14px 0 0;border-left:0;border-top:1px solid var(--border);}
+  .stats-column .stats{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (max-width:860px){
+  .type-field{height:132px;padding:10px 11px;font-size:1.05rem;}
+  .stats-column .stats{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .keyboard{padding:9px;}
+}
+</style>
+</head>
+<body class="light">
+
+<div class="brand">
+  <div class="brand-left">
+    <h1>Tecleo</h1>
+    <span>curso propio de mecanografía · 20 lecciones</span>
+  </div>
+  <div class="brand-actions">
+    <span class="user-chip" id="userChip" hidden></span>
+    <button class="theme-toggle" id="themeToggle">🌙 Modo oscuro</button>
+    <button class="logout-btn" id="feedbackBtn" hidden>📊 Mi progreso</button>
+    <button class="logout-btn" id="exportBtn" hidden>⬇ Exportar progreso</button>
+    <button class="logout-btn" id="importBtn">⬆ Importar progreso</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+    <button class="logout-btn" id="adminBtn" hidden>🛡 Ver errores</button>
+    <button class="logout-btn" id="logoutBtn" hidden>Salir</button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <h2>Lecciones</h2>
+    <p class="progress-summary" id="progressSummary" aria-live="polite"></p>
+    <ul class="lesson-list" id="lessonList"></ul>
+  </nav>
+
+  <section class="panel">
+    <div class="practice-grid">
+      <div class="practice-main">
+        <div class="panel-head">
+          <div>
+            <h3 id="lessonTitle"></h3>
+            <p id="lessonDesc"></p>
+          </div>
+        </div>
+
+        <div class="progress-row">
+          <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-pct" id="progressPct">0%</div>
+          <button class="pause-btn" id="pauseBtn" disabled>Ⅱ Pausar</button>
+          <button class="reset-btn" id="resetBtn">↺ Reiniciar lección</button>
+        </div>
+
+        <div class="type-field-shell">
+          <div class="type-field" id="typeField" tabindex="0">
+            <span id="textDisplay"></span>
+            <input class="hidden-input" id="hiddenInput" autocomplete="off" autocapitalize="off" spellcheck="false">
+          </div>
+          <div class="pause-overlay" id="pauseOverlay">Pausado</div>
+        </div>
+        <p class="hint" id="hintText">Haz clic en el recuadro y empieza a escribir. El renglón activo se desplazará como un karaoke.</p>
+
+        <div class="result" id="resultBox">
+          <div class="msg" id="resultMsg"></div>
+          <div class="btnrow">
+            <button id="retryBtn">Reintentar</button>
+            <button class="primary" id="nextBtn">Siguiente lección →</button>
+          </div>
+        </div>
+
+        <div class="keyboard">
+          <h4>Teclado guía</h4>
+          <div id="kbRows"></div>
+          <p class="finger-note" id="fingerNote">Coloca los índices en <b>F</b> y <b>J</b> para empezar.</p>
+        </div>
+      </div>
+      <aside class="stats-column" aria-label="Estadísticas de la práctica">
+        <h4>Rendimiento</h4>
+        <div class="stats">
+          <div class="keycap"><div class="val" id="statPPM">0</div><span class="lbl">PPM</span></div>
+          <div class="keycap"><div class="val" id="statAcc">100%</div><span class="lbl">Nota</span></div>
+          <div class="keycap"><div class="val" id="statErr">0</div><span class="lbl">Errores</span></div>
+          <div class="keycap"><div class="val" id="statErrorRate">0.0%</div><span class="lbl">Error</span></div>
+          <div class="keycap"><div class="val" id="statWords">0</div><span class="lbl">Palabras</span></div>
+          <div class="keycap"><div class="val" id="statChars">0</div><span class="lbl">Caracteres</span></div>
+          <div class="keycap"><div class="val" id="statTime">0:00</div><span class="lbl">Tiempo</span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div class="auth-overlay" id="authOverlay">
+  <form class="auth-card" id="loginForm">
+    <div class="auth-icon">⌨</div>
+    <h2>Bienvenido a Tecleo</h2>
+    <p>Inicia sesión o crea un acceso local para guardar tu progreso en este dispositivo.</p>
+    <label>Correo electrónico<input id="emailInput" type="email" autocomplete="email" maxlength="35" required></label>
+    <label>Contraseña<input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required></label>
+    <p class="auth-message" id="authMessage">Inicia sesión con tu correo electrónico</p>
+    <button class="primary auth-submit" type="submit">Entrar</button>
+  </form>
+</div>
+
+<div class="auth-overlay hidden" id="feedbackOverlay">
+  <div class="auth-card" style="position:relative;width:min(97%,1080px);max-height:92vh;padding:0;overflow:hidden;">
+    <button class="macos-close" id="feedbackCloseBtn" type="button" aria-label="Cerrar" title="Cerrar"><span>✕</span></button>
+    <div class="auth-card-scroll" style= "max-height:92vh;overflow-y:auto;padding:30px;text-align:left;">
+      <div class="auth-icon">📊</div>
+      <h2>Mi progreso</h2>
+      <p>Un desglose completo de tu práctica: velocidad, precisión, errores por letra, intentos por lección y el detalle de cada una de las 21 lecciones.</p>
+      <div id="feedbackContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="auth-overlay hidden" id="lessonDashboardOverlay" style="z-index:60;">
+  <div class="auth-card" style="position:relative;width:min(97%,1080px);max-height:92vh;padding:0;overflow:hidden;">
+    <button class="macos-close" id="lessonDashboardCloseBtn" type="button" aria-label="Cerrar" title="Cerrar"><span>✕</span></button>
+    <div class="auth-card-scroll" style="max-height:92vh;overflow-y:auto;padding:30px;text-align:left;">
+      <div class="auth-icon">📈</div>
+      <h2 id="lessonDashboardTitle">Lección</h2>
+      <p>Estadísticas propias de esta lección únicamente: tu velocidad, tu precisión, tus letras más falladas y el historial de cada intento.</p>
+      <div id="lessonDashboardContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="auth-overlay hidden" id="adminOverlay">
+  <div class="auth-card" style="position:relative;width:min(100%,640px);max-height:82vh;padding:0;overflow:hidden;">
+    <div class="auth-card-scroll" style="max-height:82vh;overflow-y:auto;padding:30px;">
+      <div class="auth-icon">🛡</div>
+      <h2>Panel de administrador</h2>
+      <p>Progreso y errores guardados por usuario en este dispositivo.</p>
+      <div id="adminContent"></div>
+      <button class="primary auth-submit" id="adminCloseBtn" type="button">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="chartTooltip" class="chart-tooltip"></div>
+
+<footer>Tecleo — proyecto propio de práctica de mecanografía, sin relación con ningún otro programa comercial.</footer>
+
+<script>
+/* ---------------- Lesson content (original) ---------------- */
+const LESSONS = [
+  {t:"Teclas guía: A S D F – J K L Ñ", d:"Coloca los índices en F y J (tienen un relieve). El resto de los dedos caen en A S D y K L Ñ.",
+   x:"asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf fdsa fdsa fdsa fdsa jklñ jklñ jklñ jklñ fdsa fdsa fdsa fdsa jklñ jklñ jklñ afsd afsd afsd afsd ñjlk ñjlk ñjlk ñjlk afsd afsd afsd afsd ñjlk ñjlk ñjlk añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf fdsa fdsa fdsa fdsa jklñ jklñ jklñ jklñ fdsa fdsa fdsa fdsa jklñ jklñ jklñ afsd afsd afsd afsd ñjlk ñjlk ñjlk ñjlk afsd afsd afsd afsd ñjlk ñjlk ñjlk añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj las faldas dada sala jaka kafka kasa kaka faja jalas laka kasada fajada ala sal faja añada sala salsa salada falsas alfalfa saldada fallas alada las faldas dada sala jaka kafka kasa kaka faja jalas laka kasada fajada ala sal faja añada sala salsa salada falsas alfalfa saldada fallas alada asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf fdsa fdsa fdsa fdsa jklñ jklñ jklñ jklñ fdsa fdsa fdsa fdsa jklñ jklñ jklñ afsd afsd afsd afsd ñjlk ñjlk ñjlk ñjlk afsd afsd afsd afsd ñjlk ñjlk ñjlk añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj las faldas dada sala jaka kafka kasa kaka faja jalas laka kasada fajada ala sal faja añada sala salsa salada falsas alfalfa saldada fallas alada las faldas dada sala jaka kafka kasa kaka faja jalas laka kasada fajada ala sal faja añada sala salsa salada falsas alfalfa saldada fallas alada asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf fdsa fdsa fdsa fdsa jklñ jklñ jklñ jklñ fdsa fdsa fdsa fdsa jklñ jklñ jklñ afsd afsd afsd afsd ñjlk ñjlk ñjlk ñjlk afsd afsd afsd afsd ñjlk ñjlk ñjlk añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj añsldkfj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf ñlkj asdf fdsa fdsa fdsa fdsa jklñ jklñ jklñ jklñ fdsa fdsa fdsa fdsa jklñ jklñ jklñ afsd afsd afsd afsd ñjlk ñjlk ñjlk ñjlk afsd afsd afsd afsd ñjlk ñjlk ñjlk"},
+  {t:"Teclas G y H", d:"Los índices se estiran hacia el centro para alcanzar G y H sin mover la mano.",
+   x:"hasada lagaña halagas gafas agasajas agallas hagas hala halla gala has alga alhajas llagas halladas kagas hadas gasas asdfgf ñlkjhj asdfgf agag ñhñh agag ñhñh agag ñhñh agag ñhñh gala has alga alhajas llagas halladas kagas hadas gasas asdfgf ñlkjhj asdfgf agag ñhñh agag ñhñh agag ñhñh agag ñhñh hasada lagaña halagas gafas agasajas agallas hagas hala halla afgf ñjhj afgf ñjhj afgf ñjhj afgf ñjhj hada gasa gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas galas halladas lagañas llagas fajas afgf ñjhj afgf ñjhj afgf ñjhj afgf ñjhj hada gasa gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas galas halladas lagañas llagas fajas gala has alga alhajas llagas halladas kagas hadas gasas asdfgf ñlkjhj asdfgf agag ñhñh agag ñhñh agag ñhñh agag ñhñh hasada lagaña halagas gafas agasajas agallas hagas hala halla afgf ñjhj afgf ñjhj afgf ñjhj afgf ñjhj hada gasa gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas galas halladas lagañas llagas fajas fgf jhj fgf jhj fgf jhj fgf jhj fgf jhj fgf jhj fgf jhj fgf fgfg dfgfd sdfgfds asdfgfdsa jhjh kjhjk lkjhjkl ñlkjhjklñ hjh kjhjk lkjhjkl ñlkjhjklñ jhjh kjhjk lkjhkl gala has alga alhajas llagas halladas kagas hadas gasas asdfgf ñlkjhj asdfgf agag ñhñh agag ñhñh agag ñhñh agag ñhñh hasada lagaña halagas gafas agasajas agallas hagas hala halla afgf ñjhj afgf ñjhj afgf ñjhj afgf ñjhj hada gasa gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas gasas hadas galas halladas lagañas llagas fajas"},
+  {t:"Repaso de G y H", d:"Consolida G y H combinadas con toda la fila guía.",
+   x:"ajaja gafas fallas kalk galas halladas lagañas llagas agasajas las hadas agasajas las hadas agasajas las hadas fajas ajaja gafas fallas kalk galas halladas lagañas hasada lagaña halagas gafas agasajas agallas hagas hala halla gala has alga alhajas llagas halladas kagas hadas gasas glasada klak kañada hagas kasañal glas flasada halla kallad ajaja gafas fallas kalk galas halladas lagañas llagas agasajas las hadas agasajas las hadas agasajas las hadas fajas ajaja gafas fallas kalk galas halladas lagañas hasada lagaña halagas gafas agasajas agallas hagas hala halla gala has alga alhajas llagas halladas kagas hadas gasas glasada klak kañada hagas kasañal glas flasada halla kallad ajaja gafas fallas kalk galas halladas lagañas llagas agasajas las hadas agasajas las hadas agasajas las hadas fajas ajaja gafas fallas kalk galas halladas lagañas hasada lagaña halagas gafas agasajas agallas hagas hala halla gala has alga alhajas llagas halladas kagas hadas gasas glasada klak kañada hagas kasañal glas flasada halla kallad ajaja gafas fallas kalk galas halladas lagañas llagas agasajas las hadas agasajas las hadas agasajas las hadas fajas ajaja gafas fallas kalk galas halladas lagañas hasada lagaña halagas gafas agasajas agallas hagas hala halla gala has alga alhajas llagas halladas kagas hadas gasas glasada klak kañada hagas kasañal glas flasada halla kallad ajaja gafas fallas kalk galas halladas lagañas llagas agasajas las hadas agasajas las hadas agasajas las hadas fajas ajaja gafas fallas kalk galas halladas lagañas"},
+  {t:"Teclas E e I", d:"Los dedos medios suben una fila para alcanzar E e I.",
+   x:"leña fea lisa deidad gelida seda jefe fila sida dias fije siglas del desde les se lea esa ese he ellas ideas sea diseñe llega si la le el es fe la le el es fe la le el es fe la le el es fe asdedfg ñlkikjh asdedfg ñlkikjh asdedfg ñlkikjh asdefg ñlkikjh dieses fieles dieses fieles dieses fieles dieses fieles dieses hiedes fijese hiedes fijese hiedes fijese hiedes fijese hiedes liase desele liase desele liase desele liase desele liase desele leña fea lisa deidad gelida seda jefe fila sida dias fije siglas del desde les se lea esa ese he ellas ideas sea diseñe llega si la le el es fe la le el es fe la le el es fe la le el es fe asdedfg ñlkikjh asdedfg ñlkikjh asdedfg ñlkikjh asdefg ñlkikjh dieses fieles dieses fieles dieses fieles dieses fieles dieses hiedes fijese hiedes fijese hiedes fijese hiedes fijese hiedes liase desele liase desele liase desele liase desele liase desele leña fea lisa deidad gelida seda jefe fila sida dias fije siglas del desde les se lea esa ese he ellas ideas sea diseñe llega si la le el es fe la le el es fe la le el es fe la le el es fe asdedfg ñlkikjh asdedfg ñlkikjh asdedfg ñlkikjh asdefg ñlkikjh dieses fieles dieses fieles dieses fieles dieses fieles dieses hiedes fijese hiedes fijese hiedes fijese hiedes fijese hiedes liase desele liase desele liase desele liase desele liase desele leña fea lisa deidad gelida seda jefe fila sida dias fije siglas del desde les se lea esa ese he ellas ideas sea diseñe llega si la le el es fe la le el es fe la le el es fe la le el es fe asdedfg ñlkikjh asdedfg ñlkikjh asdedfg ñlkikjh asdefg ñlkikjh dieses fieles dieses fieles dieses fieles dieses fieles dieses hiedes fijese hiedes fijese hiedes fijese hiedes fijese hiedes"},
+  {t:"Repaso de E e I", d:"Más práctica con E e I en palabras completas.",
+x:`gases silla lagañas alaska iglesias glageladas hallase egid seda si ese jefe ideas sida dias fije siglas leña fea lisa deidad del desde les se lea esa he ellas fila sea diseñe llega gelida jefes felises agasajas el kafe dile asi de ese jefes kiejas kasalla de la fe asadle dije kasalla de la fe asadle dije
+ella es fija hiedes isla hedilla dedal kasilla aida killa
+si dieses sillas la klase de seda hallada kalkada si es hil
+seda si jefe ideas sida dias fije siglas leña fea lisa deidad
+del desde les se lea esa he ellas fila sea diseñe llega gelida
+jefes felises agasajas el kafe dile asi de ese jefes kiejas
+kasalla de la fe asadle dije kasalla de la fe asadle dije
+ella es fija hiedes isla hedilla dedal kasilla aida killa
+gases silla lagañas alaska iglesias glageladas hallase egid
+si dieses sillas la klase de seda hallada kalkada si es hil
+seda si ese jefe ideas sida dias fije siglas leña fea lisa deidad
+del desde les se lea esa he ellas fila sea diseñe llega gelida
+efes felises agasajas el kafe dile asi de ese jefes kiejas
+kasalla de la fe asadle dije kasalla de la fe asadle dije
+ella es fija hiedes isla hedilla dedal kasilla aida killa
+si dieses sillas la klase de seda hallada kalkada si es hil`},
+
+{t:"Teclas R y U", d:"Los índices suben una fila más para alcanzar R y U.",
+x:"dfkj gala daña jadeas uiklgh hielas aldea gfdkfd slklls klie hgjfña jkkjls añjhjk ruiu jfur fgre fdei alfa kler jadeas agallas iels daga hallas agalla fjei dañas lsie halagada hallas klsa falsa hidalga ghlsie hallada jfgh hurga erlñ salgas hilada ruiuña reglas jkkd sañadf lñls galas urlk usada halaga salidas isla uifd añui sleilk asadas gafas jadeas dfgf asrulñ fjre falda sdgh lsañfd ureigf salñ fdañ rejk slds hgie ruedas kdruña figuras lsañfd fgeikj lñañ risa aldea slie kjsd iugfer gafas aldeas sahg salidas hallada ruiuña slklls jkkdña dagas salida segura sedal klhg lñlkñl urui sedales ergh klerre jklk lskl ghsl añadas jalas dañas fgls salas agalla usarla ideas ghjfhg sagf salñ dsie iufgdf jksa añadas jfañ fdgh usar ghjk falsa slie faldas heladas ñalssd halaga dura lskl sala ñlsl sedales seda sedas añada urer helada dkuidf ñaur sadf ghdfer rueda fdas saladas jhhjie slklls dañas jfañ dañada asiu falda aldeas slsals ñalssd regar alas salida asadas ideales kjhg kdjh falsa hjsd hgjfña faldas lñfjhg añdf lñlkñl ideal ieur duelas asrulñ saldas sdhg ñlgf reña añkl hjlkjh usadas ñlsa hada daga lñlkñl ideales agallas seda saldas ñlsa fgsder jurel hiedra dañada saru lajas ghlsie usadas aslñañ añre klfd añie urjfdk salñ helada ideales rekdgf añjhjk lajas slñlas risas klls hiedra aldeas dfsa dfsa urañ sddf hallada elige hagas jala ieas fgiu añre iusd salgas kdfjgf asadas lajas salida ieru falsas sadf lñre alfas asada dslk hgañ erlñ laja sdei ieas ieui hidalga aslñañ dshg asrulñ asiu hilada sleilk arder lsdfas saladas ideal hijas alfa sdhj lñañ kdjf lkei slsals klsa dañadas urlsfg ñlsa ghña dañada hallas sdjh slsals daña fjlñ slkjie regla hjjk hijas dkfjsd añie slñlas dkre urañ jadea asada galas lsjk erña ñalssd urrelk sedas alas gfdf jkkdña ñlhjkl ruedas saladas daña galas hielas helada añui sedales salas kdgh slñlas risas dañadas reña jkrekl hidalga kjur hjdffg añdf alfas usada heladas dslk jfghas heladas iufg dedal aldea jhdkre eisd lñre alas ñlhjkl eijk fgjh gasa seguras falsas añkl"},
+{t:"Repaso de R y U", d:"Refuerza R y U junto con las letras ya aprendidas.", 
+   x:"daña uidskj sllñ aññl aññl gffj jfui erñlña lkña jksa lsds dsdkdf añadas ñldk jadeas asada añhj sllkañ haga gasa ieñalñ sedas ideales hilada figuras galas dagas alas usadas agalla ñlsl saldas seguras isla usadas galas iefg ñalkkd ñlkliu hallas seda ñlei salgas heladas hallas falsa lkls agalla dferañ jadea rugf añgfur ñljhds usadas gfjkie ñlkdas ruei dkur aslñ heladas daña alfas lñañ jfiu hagas erñlña kljk dksl jadeas hjre saie asfjañ asadas dañadas helada fdiu alas figuras dsklñl usada hallas ghre kdgh rueijk rels dsdkdf agalla lsfg dksl ideal ñajh faldas dagas jadeas iulññl asfjañ dañadas añadas gfjh ideal dañas regla añada hgjh salidas añada slañ fdñl lñañ figura aldea heladas dfjk ñljk agallas hijas hgkljk aldeas gasa sedal usada seda salas iulsfd sldk halagada erñlña dañada asfdie eidk ñlkdas slds sllkañ seguras haga isla kdhg dskd aslñ assa dañada salas lsds asfjañ hidalga ñlsa hgfd saladas añjf ersa urjkds hjhg dfurds usarla falsa durar ieñalñ fjfg salida salada aldeas erei slña halagada sedales galas ñajh iuur gafas sdsa hallada eisl aññl hjña slhg hallada dañada eidf añlkdk urds saldas assdsa erkj lkña hilada añada lsghsd iudsdk saei dffd kjña reañ daña fglñ dsjh añjf klña fjgf gfre hilada hada hjds fdlñ usarla lkdk sllñ asada kjru lsdfsl jklk sdlk halagada dedal falsas halaga dkgh falda klña alfa iulññl salidas laja dkdf añsl hjie lkls jkru falda lsas lajas duras gafas algas rueda lsas faldas hjjk añlkdk añsd hjsa añsl slds sljhlñ dedal reur lker fglk arder lsghsd sllk sljhlñ fjkd ñlkdas segura duelas regar slru iujk hgdk ñlkliu añsd reeijf dfer urdfls ñlei elige alas eisl salgas fjfgsa fjeriu hielas ñldk jhsl reglas salida salada assa aldeas reglas iedk dshg ñljk hallada sala uilñ halaga dfas helada ruedas sala risas jurel ashg urkd risas sdjkre salida lñsd sdlñ ñalkkd hada sdsl fggf fdjk agallas lñsd lsgh segura kjña lsdfsl uikj añadas ruhj lñañ saei hiedra kddf gala hgfj sdsl gfjk rulñ hurga fgkl jalas lajas halaga jkkjas jhfjñl"},
+{t:"Teclas Q, O y P", d:"Los dedos meñique y anular alcanzan Q, O y P en la fila superior.",
+   x:"sedal eqsl heladas aseq kdeqfd faldas hielas dskl ideales kjiuñl opei pequeñas hagas sapq hijas jurel ghña lñkdkl asañre sdqp aññl iufgio fgñl risas dañas sdgf fdqe opkl reposa slfj aldeas falsa añjh ñadf poder dkei hilada ghio jadeas reio falda hada dañadas jksa quiso quejosas ñlhgqp saaskl lksd opñlña quiso hiedra hglk qphj agalla quejosas sedas ursd añfg poesias kjjhkl pequeña lñkdsd falda quepo soplo sala salas ñaas lsdkop dedal dañadas dedal salada halagada usarla kllspq kdeqfd eropeq asdk dura jala sdui fghjsd pojh gafas slqp pqeids algas aññl qehg fddfña ideales quepo añada risa surge dañada hojas asqp jhur salada oiañ qere galas lsio jadea asañre iulñsd kdru oppq fjsd gasa figuras haga asfj sedal dsurqe salida eqñakj gafas faldas hoja fdiudf ñlgf jadeas gfio dañadas eqsl poesia uier redsña pqjhkl salidas ieas poder safdlñ eiqpur jheq oiop slqp uids dkre reposa saaskl saldas eqhg fdls lksl pqfjfd kllk quiero halaga añada dfsa falsa lsdkop eqie kjjk uils sajh reglas ñlhgqp asadas sdurgh sapq erqe pqdkie duelas hgñl fjkd ñadf lkoi kllspq iesl aldea ioop eigh jfñlls reposa durar salas hgkldk erqpoi aldeas fjfd dslñdf ñlru rueda fdhgña slre oppq saeiop oiop ñljh fjre hallada hgjf iesd oiañ eqiels oieq hilada asdk gfsare oiña opjfui pqdkie lñqekd asada usadas eifjgh jfqp safdlñ urre ideas hallada kjopei fgjfañ fjlssd rufd popq lñqekd gala duras hgsa jfiejk ñafd hielas lsoigf soplo lkpqas dsfgqp soplos porque queso ieas popq jfñlls gfru lkdsdf fjña dslñdf eiqpur gasa qejkkd usada sder hojas pqsl poesia hallada usarla lñds agallas soplos saldas kjopei ñlhgqp dañada reqp sedas faldas pqdf fdie quejosas hjjkjh falsa lñer fjkl sedales aldea dsurqe halagada dssd falsas gheqjh daña dklk saldas ghsa añkj poseer pqdf ruoi pqsl kjasfg segura urkl querido operas kjdk dsdfeq usadas alfas añlk qefg qehj opkd hurga jhfd sdjh sedales pequeña halaga salgas algas jalas jfiu aldea eqñakj dfpqlñ iods asopgf poesias eihjñl alfas lkpqas lñkdsd isla kjqe eqkj poesia saladas añadas opkl dañas ñaas lsoigf erfjsl"},
+  {t:"Repaso de Q, O y P", d:"Más palabras con Q, O y P combinadas con lo aprendido.",
+   x:"hallada dañada eiañ ioñl ioui ideales eiaslñ salas dklñjh dslkui dedal añada opañ ruñafd pqeq quepo hjñl falsas eqfj salas falda kdqpjf añadas pojhañ asadas ñakjhj dfñlie eiaslñ jfop pequeñas jalas opsd qpei fghg iuoi jflñhg oipoeq sedales jkkd sañl dflk jadeas fjei dslkui sala poesia añds quejosa poseer halagada gafas añjh hielas alfas faldas hallas erfd slkdña jhasqp slkdña quepo reds hagas rueq hjui sedas pqoi dkeq ghña alfa galas qegfoi salñ gala operas agalla queridos klhj kldf rejh gfer eilñ queso gafas faldas fdjh dañadas pqruqp usarla salidas fgkjjk jadea falsas podkfj risa jfer saladas kjoi fgasre opsd alfas añpo kllk iehjiu jhasqp salñ pore usadas pols opqe eriu saio quejosa hoja urpo rufd iuqe qper saldas sala jala reglas hilada dañada quiero klas iuañoi aslk ñlñaañ segura alas eiañ salada agalla poder seguras hidalga reqppq sdfdña heladas eiaslñ halaga ruedas jfhjsd hielas fjasoi ashgjf añpo aldeas dfer daña dañada sala helada gfei sdfdña salada usada ioeq jurel dfpqjh slañ operas oipoeq dura ideales algas iuañ dañas dañas saio dkjh pojhañ poña algas slañ surge heladas hidalga querido añpo asada aldeas oipoeq añlñ falsas halaga uilñ posa iojf halagada ieñl iofd lkfjas fdur agalla uids quesos soplo haga reuilk asada quiera sdsl añlñ lkfjas salgas opera arder porque iohgña fgio laja hallada ñlñaañ hgjh dkls hagas fjasoi agallas pqeq opera falsa jhur qpfjñl quejosas añada soplos quejosas iolk regla eqfd gheq ruña añadas alfas lñfg agallas jala ereqio opsafj añada slru queso pols oilñ alas dklñjh dskl poesia pequeña querido pqruqp ideal reqppq sdei añkj aldea ruuiur lkkl eiresl iesa salas pequeñas slkdña jfio asadas gfklpo ghur dagas gfgh eqjk falsa reposa lajas hiedra risas ieñl salada queridos ghio eqañ hada hgasfd pequeñas regar ñlsl oipq eqañ qpiu aññlio iuhj pokl kdqeie dañadas heladas ñals pqiufd opiu ñliukd jalas asjk saañ fdqpñl dsuras ideales oilñ kdqeie pequeña usarla oipq dslkjh jkur quiero algas poesias poder duras gasa lsds eilñ opqe dsuras erfg iufj saañ usar asdf ñajk safg"},
+  {t:"Teclas C, M y N", d:"Baja los dedos a la fila inferior para alcanzar C, M y N.",
+   x:"dseqlñ dkña alfas jfañ camino pequeña ñauroi dedal nciu sdjh asjhjk halaga salas kdasio assalñ hgeqsa jfei hijas asadas hgkj eqdsmn mndf sedal salida kdmn falsas mnañ poio daña alfa jadeas ashg añada ierugf sdpo assalñ menor quiso hagas mucho lñreeq queso hgsljk slañ salada cnfg dseqlñ opqp iogh eqjh heladas pequeñas jala nunca eqdsmn isla ñaoiui ghñalk erlñ fghj jadea erie rupofg qpkj jala asjk usadas quiera askjcn camisas dkpq jkmn sdañ falsa reglas kleq hjre ñaponm camisas quejosa sdpo seda ghñalk qecn usada pqds pequeñas cnls quiero ruei slña camisa ieds poio ñlqp iuañ gfnmhj iolsqp eqpq uiañ hidalga poder posl mndk añlkfj pqerañ cocinas añada gala poesias sdjhhg aldeas agalla quepo uriehg ruds kdeqkj pqerañ kjeilk hojas podsañ saei urls galas cnfd ñlqp hojas alfa ersasd oire slañ qplñ canoas lkopoi salgas añkj kleq lsas dkpq reposa poseer camion ncqp quepo jkasru añdf fjfd duelas erls dkjh mnqe halaga saladas seda jkfjsl kdasru fgñlio añlk agalla urkd uiur maquina pqds hjoi nmsa fdsa hada hallas ncqp lñklfg kder ñlañ camiones pqerañ fgsa qpñaru porque aslkre asada lñpq ghdk jhhj regla pequeñas dagas laja qplñ queso ruqe lñklfg mnpq arder hallas poesias jkeqña kjop ghkler agalla asfd ñlañ iucnas mneq usarla reglas urer ñauroi salida agallas klcnre asada ioiu lñkdfj lñpq qpdk gfdf ncls moneda helada iufder lajas alas maquinas saladas eiña dfñlop queridos fdls jkpq ideas iueq qelsie rujker lñña algas lslñ gafas qplñqe saei salgas opqp fdañ fjsa kdeqkj iemn pqfd agallas usadas soplos hidalga porque gfdfas salada quejosa lkopoi fdqp daña ruedas cocinas sdncjf fgkl fjio helada canoa falsa usarla dslñ gfdk halagada erñlls erñlls moneda dfsd dkña dañada askd agallas lñña qpgher heladas operas quiero soplo algas gfjk falda hilada dañas lsas añadas salgas kjsd opqp hidalga camino risas figuras kllk sedal reposa oilspq dfls hoja asadas menores askd oias ideales opera heladas ideas dfñlop dañada dagas añadas salas jalas risa ideales soplo kjklsl quesos canoas fjsd jklsfd usar ñlgh dkdf hjpore hjlk lñkdfj"},
+  {t:"Repaso de C, M y N", d:"Consolida C, M y N en palabras y frases cortas.",
+   x:"falsas dedal opañ pqrujh iohjur asio nciu eqsa oiñl kdruas jhgfkd uinckl pequeñas hgjf jkoi pquras jadea qeop gfie quejosa camiones gfuipq duelas galas eqdk agalla jksddk caminos soplos sdcnkd cnsd slei hjmn asio jhurfg hglk gfuipq hoja saeifj lajas iuañcn salas opñaoi halaga algas agalla ñlnc kdpoñl lksals kdasru eiop figuras maquina qpncqe quepo agallas gfñads camion halagada jfsd fjpqpo jhcn agalla pqfj uilk eias quiera eqru nchj galas durar lñpqeq dañadas oplñ dsls ñaurjf añur ncqpkl camino haga qereñl saladas camisas añcn soplos gafas nunca usadas lñpo eilñ dkpq añña hurga iulñ daña rueda klqe elige sarulk slqpjk klru lshjmn pqnc ieeqjk sedales arder salida nmfg dañada ñajk regar qeñl salidas agallas surge querido hjnm ideas polk kdqp dkui jhañ usarla lajas reposa klañ hgio dsre gala añadas qereñl hilada hielas klfgkd oplñ menores qpre soplo añada slfj dañadas saeifj lspq asada dañas usadas ghiu sdkd ñlfd faldas fjfd isla dssd jala urjf asada maquina sala ideal ñlfder halaga hada ioop kleq sala dfpoqp queridos mano risas usada dañada cocinas oiñl ñlkj rudk falsa ncdklk lksals kdsl faldas eilñ iuqpsa jkiuña kdasru kdpoñl falsas aspq qedk kdpocn kdpoñl soplo pequeñas saladas ideales gfkder reglas qpmnqe asdfña hgpq jferio heladas hiedra sdfdqp oiur mnsd qpre iels maquina saldas sedal fdjfds gfoi nmurjh quepo pequeña cocina ioop iuei kjresl pqsa canoas dknchj fjpqpo dksd eqqe assa dagas poder assa ideal slsd añurcn daga uiiojk assl eikd assl klqe pqsa popq jhnm aspq qelsdf ncjf dañada hidalga iesafg ncqpkl poseer pequeña figura ponm porque asadas lñas fjpqpo iuañcn asadas slsanc come fddk opañ jfkl sasdjf opñaoi jala ñarenm dskjkd agallas lñas iueqls seda duelas sdfdqp laja hojas quiso gasa usar poerjk sleq kljh quesos reglas ghqe fjerlñ hallas erre cocinas fjhg slqpjk helada añjh dedal sedales dfpoqp ruie algas slsd monedas ñlañ gfñads kddsgf reposa añkl sljfeq iulk opñaoi poerjk dkhj kjiu usarla queso dañadas quesos lñas dsas añada halaga ioñloi jalas qeop dkio segura dfnm quejosa sedas qeañ hgdk iuer"},
+  {t:"Teclas T, V y B", d:"T se alcanza desde la fila superior; V y B desde la fila inferior.",
+   x:"operas pequeña repq botas helada eiañ vidas tufj uiañ sedas sadf qpkd jadea slui slruqp sdslei urpq buena duelas qpeq oiqe jkkd vbsapq buenas tuvb lker bancos quepo poseer pequeñas batidos pqtu dslk slqe ioña klpq urtr aldea tupo vivos monedas vbgh fdio dktrmn rtei heladas eqdf rujkañ vbpq hallada ñalsei hallada jalas sedal sedales salidas agallas utoi hjuimn utds alas monjes sdeq qevc pojfer monje utas faldas hallas hgpqnm quepo vamos dshj astu bvoi reglas qeañ qepqfg añsa usarla hilada poseer dkopsd ñaasiu visita dañas batido poesias vcgh dkpobv jhlñ abiertos lslkqp camino dañas mnbv ñaaskd querido jfgf añgf dkruvb ñaionm vcielk eqvcui hilada erña dkvckd rufj vivo trabajos jffg menores usadas ñañl jadea bancos sdeq dañadas dseqañ canoas galas banco monjes salas camiones aldea vestido eqsdkj eqvclk kjtu añsa vbei camiones uthjnm jfrt usada tuie qepqfg kjuiqe rueda ioñl asadas iosd qeñl dkpobv eihjjh utiuña opera cvañjk camino lajas salada urlk rtoiqp sdslsa dffjbv bveq slsa vestido ergf hjasfd slre pqsa falsa kdjfeq jkre iuio bniepq helada dedal eqbn hgpqnm iusdgh moneda vbeq añmn ñaionm jalas dsghfd hada añsa trabajos jhoi dañadas abierto ñaasiu iuoitr ioqe añoi risa reposa poder kjnb jadeas seguras tiempo algas asru utgfls trabajo qpie qeerkl bveqtr tusa klrtio poesias kdghpq iortoi sdslei tiempos ruedas gasa equilñ nunca jhvcsl galas vestidos qelñ cvoivb errt poesia opkd quiero batidos nbio ghlk ideales saldas lñhgmn queso figuras ghfd aslk verbo bvvb cocinas qeop duelas dkopsd bngf iokjds iueqpq regla mucho ghjf reposa cvtuñl sala surge assaur uijk ñlur kjqe dfkd lajas canoas ñahj hidalga vcsa pqgh nbfg tuui seda faldas dfgh kjkl jhopkd iuqpei quejosas alfas jhpqvc jklk verdades ophj tiempos maquinas salgas halagada camion bravo qeerkl jadeas fdgf slei camiones usarla asiu quesos rure hgqput bnsavc uifgmn urpq vbsapq laja querido uroi camisas aldeas ñañl pqmnds regar quiera camion cvañjk mnslvc slruqp oiqe qeñl pqmnds durar pqña jalas nbpo salida camisas vidas usada qpui lslkqp ghie verdad lkpo sdslsa monedas equilñ pqtu salidas hgñagh falsas"},
+  {t:"Repaso de T, V y B", d:"Refuerza T, V y B con vocabulario variado.",
+   x:"pqkd jfiumn tarde ioslña saladas jkoi quiso añadas uikd vcds opiu tras lkqpsd fgutjh qeñl seguras batido vamos ieña canoa lñlsut asada añqe bnnm salas urjf qeoiut poesias camiones poseer cocinas hjvb erñaur ideas vcklsl kldfsa fjiere iobneq tuañ dsghgf hggf qesa dsmn aspq ideas bancos lksa trabajo asvb aldeas alfa lñlsut trkdsl bnas jfer fjbnrt kjur opera nmie vivos sakj ñavc eqjhhg eqrt poseer sdds soplo qeñl kdlñ tutr bvurcv trabajos reer ienmñl iofg pokj verdades opsl slio hjkj añeqnm pqlñ asbndf maquinas canoas monedas monjes rtqp quiero salgas agalla jhqpio fgslkd vbie algas ñlkd bvlñ poseer opghña erñaur helada sakj urslhg durar hgsl hijas pqdf aldea añqe lñjkkj cvñl iofdfg ñajffg sddk rufj sdreiu dfre mngh añada ruñl soplo cvkl heladas lñvc cvre risas heladas seguras iegh agallas lajas ioslña verdad jhqpio mnña pqghgf cocinas opera dañadas pqkd eriuop hoja relñnm jala quejosa banco iuvb hojas seda fjopls iukj sdeq hallada menor reglas uiutei usada queridos tuqpsa quepo bvoi lñlsut agalla cvkjjh querido dfsl tiempo alfa jftrre erkdbv dkfdls quesos sahj añada dura mnjh eifg iuhj quejosas qenb qpru trabajos soplos hidalga usar poder vcrufg urñl alas quesos saladas lkqpsd visitas revb asds relñnm agallas salada tuqpsa ercvfj iuvcdf camisas salk vestidos verdades dañada pqñl iore halagada fdña laja añeqnm fjnb sdeq lñfd quiera ñajffg mniuañ figuras dedal rtgfds qesa mnlñ iegf ideal ieña porque isla fgvb kder maquina hjñl añadas nmer fjiofd troi trmn kdfj cocina abiertos vestido lkop fjslsd trabajo visita hojas camino hgklfj sala gfbnpq qpjf buenas ñllñ vbiubn ñldspq ñavcjk daga kjlñ hagas asds visita hidalga poder tusd reposa dagas iekl sedales bndsañ erlñ poesia ghdk lkop pquihg caminos trkdsl daña segura helada come rejkie fgsa aldeas jhqpio faldas salida soplos falsas lñcvdk añqe popq falsa reposa pquihg cverds gfbnpq hallas qetu quiero bravos asbndf qeqp vidas ñaie qpqe rutrds ruedas elige hielas buena erlñ hilada cocina gala jfqp quejosas fgslkd lkut salida dañas qpqe aspq halagada canoa salas fgei visitas soplos jadea jfnb"},
+  {t:"Teclas Z y Y", d:"Z se escribe con el meñique izquierdo; Y con el índice derecho.",
+   x:"sdsa quejosas quejosa dkczña surge trdf lñbvvc lskjbn iuvbrt ghurqe botas añbnpo nmyu pqfjkl canoa poas soplos ertyjf hidalga saerie salas klmnuy lkui ytqe usadas iojkcz zapato rusl ideas gala algas iovcqp operas quejosa ytasqp ytasqp queso quiera halagada yttr iojf qeklei hallas canoas klytcz mnlñ opdsña sakd arder tarde maquinas añvb verdad ideales dkbvfd oilshj nmqe dfvb dañas iuvcfj yuui nbña kldfeq hijas reposa oifdnb jurel kddf iohg opera porque agallas ñalk risa usarla oilñ hgre gfcvkl bnas halagada lñbv qpnbbn oikjbn zceikj pqru sedal ñaiu usadas iepopq ñlñafj asadas zceikj bizcocho rtdf hada yumnhj czrtpq mayoria kjiu vcre tyñl queridos bvhg sagh monjes kjpqbn czrt belleza nbytsd czerfd pequeña duras monjes salgas slcz oisd uypqcz añqeur moneda playa urpq dura yuñlop bota sdsa urmn verbos isla vestidos nbañ cines vamos usarla querido kjei ñlui verdades mnnbre hilada trayecto manos opdsña duelas klzchj gfdf quepo camion nbañ vamos alfas menores trayecto gafas dslkui quejosas pqbnio yuzc dañadas verdad bvyu fgsa falsa fjsl rueda ioei risa agalla poas qpiu dagas saladas tyslvc dfña vidas nbtr bvslkd algas queridos nmñl camisas kdlkyu vcpq poer rtds pqnm gafas aldea ieeq opñlfj aldeas jhiopo dsas lñqp uyqe mnsdzc halaga reglas uias asada camion jfiu usar seda iebvjf falda laja reposa hojas sdvb yudkas ytre iueq bancos añña saerie alas jadeas lkjf dfqe agalla soplos cvfgzc poesia mnsd monedas alas monedas uyñajh jhls nbdk dañadas poesias gfkl maquina cocinas saoi empieza ioieeq salas faldas falsa moneda hjiouy jkrunb nbru soplo salidas erfd hallada añadas ñabv yufj verbo qeñafj qekj soplos kjnb sleq trabajo menor poder iepqdf hojas poop oiop zapatos saldas klzchj trabajos aldeas lñbvvc opkj zapato jadeas añada figura czbneq dañada ruñadf dfqp sleiie nmañña salida ñavc dañada lñmneq cvyu lñsd sads ytfd mucho faldas jadea galas ideas jala hilada nbzcña camisa usadas hggh kjpqbn hilada bravos opie zcrteq agallas trlñ opyusd añña mnsl quizas tiempo vbyt salida mezcla sedales uypqcz gfvc jhiopo brazos batido opera poesia sdkjañ pqhjcv fijeza poesias ñlsa uifgña"},
+  {t:"Repaso de Z y Y", d:"Más práctica con Z y Y en contexto.",
+   x:"jadeas nbañ lspq camino kjpqbv iolñru rtcv poievc jalas qeas camisa pequeñas qeyt dkqp brazos iepq daña rtañzc queridos querido buenas asañ dañas soplo vbcz batidos mano eqfd sala poder czqe vcsdhj aldea fgkduy hgñl yusa añlñ hgsl fdnb brazos fjeq bvieqp ytjh salada quiso lsasur yuioqp nbañ bvdssl erdf laja batido rutr ñaas tyañ pokdtr canoa gafas ñllkdk sedas qejk usada iukj elige ideales fjre falda dsio dsiu bnfgsd iuie eiur dsñl hjei pquy sakd lkuy durar iufd quiero zapatos ruedas hjhgui eivcio uykl pqbv nbvb iesa maquinas cocinas hallas vamos alas ergf ñliejf seda opña quesos galas salada heladas kdvb hgpq hgty trabajos risas alfa bnasnb aspq pequeña vbqp lñkl reposa qefj verbo mezclas visitas galas hallada porque falsa opls iesa bviu dkqedf urcz cabeza añadas kjpq jkas ruer pqghpo mnsa playas ioas dkyu cviocz bellezas vamos lkdk maquinas ñafg oiaspq yteq salidas dsio hjfdlñ verdades trabajo cabezas lkañ bvnbui pqqe quesos soplos opañ rels bravos rueda iosa tyyuoi yuioqp vestido usarla alfa hallada fddseq iepq verdades cvjk usar añyufg iodfkj erñl zapatos klcv czvb hielas ñlrekd kjpq ruhg ideas dañadas verdad seguras cvopjh bizcocho ñaopiu empiezan bnrusl jurel bvioña zapato ñldkcv qpfg gfkj hilada dfdsru aldeas halagada ñajk hallas monje lñña bancos canoas dkqp eivcio asadas halaga vidas ñlrt hilada fduy falsa dsqe figura eqeiqp kltr dagas helada menores dkur rudkhg camisa querido jkds gheqzc nmvbfj jfyu agallas ñlio ruedas bizcocho azules ñlrekd camiones salida lñie qebvdf salida dkañgh oipolñ jkbn haga lñjh gafas urls lñhj salidas comen soplo fdpo gala maquina ieop asmn zcfd bravos azules ioer dañas sedal vcqp añyufg rtas dshg caminos isla bvañyt añlscz figuras oimn gfbn bnlspq vcer slui dedal fijeza añlscz ñaeiuy algas sdiu caminos canoas regla lkop figuras urqe quizas iecv regar camisas usada añlscz uyeqzc faldas zcklqp belleza halagada saklas iuyu yuie monjes ytlkdf camisas bizcocho buena urañ pqghpo quesos lñie azul pokdtr botas lñas visita bvioña poesias qepq iulñgf sdlñkj kdds kddf sdds mezcla quiera salada uivbds askldk"},
+  {t:"Teclas W y X", d:"Las dos últimas teclas: W y X, poco frecuentes pero necesarias para el alfabeto completo.",
+   x:"moneda iueiew rtfg sasl falsas yuwe trabajos agallas examenes asñaow azules brazo dsiu qpña xcmnjf eiqw aldeas oprupo yuxc fjaññl operas tiempos ideas quiso ghña dura alfas nbiu galas aldea dañada fdposl lknm urer hiedra qpasmn cabezas xzdffd abierto tycxds tywqjh dsiuwq extraño ideales powo kdasru erhj owcxfd iols qpnmkl regar ñlfd arder surge vivo camisas camino dsyu pqrtqw asadas manos agalla oxigeno botas monjes quepo quiera lajas quesos ñasl xznb qwopls fdhg vidas seguras uicx alfa qwlkre come iujkxz hada salgas rtjk dedal rtio rtow quejosa maquinas queridos añvb dkjk hidalga uyre opwe helada wepowo añqpei añadas asadas bellezas poder owwe dsdkdf erlñ gflsnm seda ruaspq qwopls boxeo bnew elige añsl wokl quizas helada ewiujf saldas qpdk bellezas halaga fgio soplos uyvc owbv ñlasqw kdur jhqw quepo cabeza mner tarde retrfj pqqptr kjwoer exacto hielas tardes porque boxeo añadas qpopru trabajo lñwq zapato quiero poesia gfio duelas kdyuie tyyu regla verdad bnqw eiañ vidas reds opur asrtpo urvc mucho sddkxz añvb añsl wqhg iewo falsa qppo slpo poesias lñhgñl qpkj brazo xzkjdk añada rtañ ruds tyiu qwmn qpkj lsñacv vbhgkj kiwi camisa boxeadores añadas iuls posdjf ñlfgwo sdjfsl extremo rtnmañ wegh yudfcx urjh uyds pqew poesias batidos monje poder fgjfhg recx rujh ghdffg falsas ñajhñl vivos owpo hijas gala jadeas pqfdhj erklvb buena qpdk owfd sluy ioña soplo pqfdhj camiones posd posdjf halagada empieza jhzxur cxuyhg excelente faldas ñalsop hjñlcx hjkj dañas asnm camisa vamos dkew salada aspo ñlgh mnoi fdvbds ower ideal qpña kjkd alas lñwq uiñlls wifi hjzx fgfj wqnb wekj erty hielas haga maximo ioopie pqrtqw cocinas visita jala xzasqp sedal dañada buenas eivcwo saladas saldas erñl banco durar usada examenes lñewkd qpnmkl maximo salas daga ruopur nmsl ñlfgwo fgvc jhwq cabezas lñña alfas moneda ñafd bveibn bvopsa canoas ñayu qwopls woas iuvc monjes lñie asñaow vcui sala sazx ytopre boxeadores iuwe ieru ñlkl trayecto galas lñewnm wekduy lñlk figura opwe jkpo hjnbrt añkj oxigeno trabajos lñxzdf examen lkfdvb ghfgrt oppo woñldk zxkl dedal galas iewe"},
+  {t:"Texto plano (sin tildes, comas, puntos ni mayúsculas)", d:"Ya conoces todas las letras. Escribe este texto corrido, todo en minúscula y sin puntuación.",
+   x:"el perro corre rapido por el jardin mientras el gato duerme tranquilo sobre la silla de madera y el sol calienta toda la casa durante la tarde de verano la vecina riega las plantas del patio antes de que caiga la noche los niños juegan en la calle con una pelota vieja y gastada un vendedor pasa por la esquina ofreciendo fruta fresca del mercado el autobus llega tarde otra vez y la gente espera con paciencia bajo el techo de la parada en la cocina la abuela prepara una sopa con verduras del huerto el viento mueve las cortinas y trae un olor a tierra mojada los pajaros cantan temprano en la mañana antes de que salga el sol un carpintero arregla la puerta que quedo rota desde la tormenta pasada la biblioteca del barrio abre sus puertas para que los estudiantes puedan leer en silencio un grupo de amigos camina hacia el parque para jugar futbol despues de clases la panaderia de la esquina vende pan caliente cada mañana muy temprano el rio que cruza el pueblo baja con mas fuerza despues de la lluvia los agricultores revisan sus cultivos antes de que empiece el calor del mediodia un tren cargado de mercancia pasa lento por las vias cercanas al pueblo la maestra explica la leccion con dibujos en el pizarron para que todos entiendan el mecanico revisa el motor del carro que dejo de funcionar esta semana un pescador sale temprano en su bote pequeño hacia el mar abierto la familia se reune en la sala para ver una pelicula antes de dormir el jardinero poda los arboles del parque antes de que llegue el otoño una anciana camina despacio apoyada en su baston por la acera angosta los estudiantes salen de la escuela y caminan juntos hacia sus casas el sonido de las olas se escucha desde la playa cercana al pueblo un niño pequeño aprende a montar bicicleta con ayuda de su padre la lluvia cae con fuerza sobre el techo de lamina de la casa vieja"},
+  {t:"Abecedario completo", d:"Este texto contiene las 27 letras del alfabeto español. Escríbelo completo sin detenerte.",
+   x:"un pequeño zorro veloz salto sobre el perro flojo y luego corrio hasta la granja donde el buey y la vaca comian maiz junto al rio mientras exploraba wifi kiwi taxi benjamin pidio una bebida de kiwi y fresa mientras el zorro flaco jugaba con el yoyo bajo el sol de otoño el veloz caballo salto la cerca de madera junto al viejo establo donde dormia el buey cansado un extraño pajaro azul volo sobre el jardin mientras el niño observaba con asombro cada movimiento la vieja bruja preparaba un jugo extraño con kiwi limon y miel para calmar la fiebre del niño el joven mecanico arreglo el motor oxidado del camion antes de que empezara el viaje largo un zorro hambriento merodeaba cerca del gallinero mientras el perro guardian vigilaba toda la noche el extraño explorador cruzo la selva espesa buscando el templo perdido entre las ruinas antiguas la joven bailarina practicaba sus pasos frente al espejo mientras sonaba una vieja cancion de jazz un buey cansado tiraba del carro mientras el granjero cantaba una vieja tonada campesina el zoologico exhibia un jaguar veloz y un pinguino curioso que hacia reir a los visitantes la maquina de vapor avanzaba lenta mientras el humo negro subia hacia el cielo despejado un joven explorador uso su brujula vieja para encontrar el camino de regreso al campamento el fuego crepitaba mientras los viajeros compartian historias extrañas junto a la hoguera del bosque la extraña melodia del violin llenaba el salon mientras los invitados bailaban toda la noche un excursionista subio la montaña nevada cargando su pesada mochila y un mapa antiguo la ballena azul emergio cerca del barco mientras los turistas tomaban fotografias asombrados el joven aprendiz de herrero golpeaba el metal caliente siguiendo las ordenes del maestro artesano un zorro y un lobo compartian el mismo bosque aunque casi nunca se encontraban de frente la extraña maquina zumbaba toda la noche mientras el cientifico anotaba cada resultado obtenido"},
+  {t:"Tildes, comas, puntos y mayúsculas", d:"Ahora se suman los acentos, la puntuación y las letras mayúsculas.",
+   x:"El águila vuela sobre el río, mientras José observa la escena. ¿Vendrás mañana? ¡Qué día tan hermoso! María preparó café y pan para todos. Andrés llegó tarde a la reunión, pero nadie se molestó por eso. ¿Trajiste los documentos? Necesitamos revisarlos antes del mediodía, por favor. La señora López compró frutas frescas en el mercado: manzanas, peras y también algunos plátanos maduros. ¿Cuántos años tiene tu hermano menor? Según recuerdo, cumplió veintitrés en agosto, justo antes del viaje a México. El médico recomendó descanso, hidratación y una dieta equilibrada; también sugirió evitar el café por unos días. ¡Increíble! Nunca había visto una puesta de sol tan hermosa como la de ayer en la playa. Verónica estudió toda la noche para el examen de química, aunque al final estaba muy nerviosa. ¿Podrías ayudarme con esta caja? Pesa más de lo que pensaba y no puedo levantarla sola. El niño preguntó: «¿Por qué el cielo es azul?», y su papá intentó explicárselo con paciencia. La función comienza a las ocho en punto; te recomiendo llegar unos minutos antes para conseguir buen asiento. Óscar terminó su proyecto justo a tiempo, después de trabajar varias noches sin descanso alguno. ¡Cuidado con el escalón! Está un poco resbaladizo después de la lluvia de esta mañana. La abuela contaba historias fascinantes sobre su niñez en un pueblito cerca del río Ñuble. ¿Ya firmaste el contrato? El abogado dijo que debíamos entregarlo antes del viernes próximo. Gabriel y Sofía viajarán a España en diciembre para visitar a sus tíos y primos. La conferencia sobre economía comenzó con un análisis detallado del último trimestre; los asistentes tomaban notas constantemente. ¿Recuerdas dónde dejamos las llaves? Creo que las vi cerca de la puerta principal, junto al florero azul. Después del almuerzo, Raúl propuso caminar hasta el parque para aprovechar el buen clima de la tarde. La profesora explicó, con mucha calma, por qué era importante revisar cada respuesta antes de entregar el examen."},
+  {t:"Números y símbolos especiales", d:"Practica cifras y símbolos frecuentes en textos reales.",
+   x:"1234567890 - 25% de descuento, codigo #A452, correo ejemplo@mail.com, referencia (2026), total: $350.75; ¿confirmas el pedido? ¡Gracias! El vuelo 4521 sale a las 14:30 desde la puerta B12; el equipaje no debe superar los 23 kg. Factura #98214: 3 unidades a $15.50 c/u, subtotal $46.50, impuesto 12% = $5.58, total = $52.08. Llama al 8888-4321 antes de las 6:00 pm o escribe a soporte@empresa.com para más información. La contraseña temporal es Ab12#Xy9! y debe cambiarse antes del 15/08/2026 por seguridad. En el año 2025 la empresa reportó un crecimiento del 18.5%, comparado con el 12.3% del año anterior. El apartamento 304-B cuesta $850 al mes, más $45 de mantenimiento y $30 de estacionamiento. Coordenadas aproximadas: 12.1364° N, 86.2514° O — revisa el mapa #7 para más detalles. El descuento aplica solo con el cupón VERANO25 y compras mayores a $100.00 antes de impuestos. Reserva confirmada: 2 adultos + 1 niño, habitación #205, check-in 20/07 y check-out 25/07. El termómetro marcaba 38.5°C a las 3:00 pm, un récord para un 19 de julio. Serie de producción #A-2026-0091; peso neto: 1.5 kg; código de barras: 750103458210. Envía el archivo final antes del 30/09 a las 11:59 pm; usa el asunto [URGENTE] en el correo. El interés anual es del 4.75%, con cuotas mensuales de $215.30 durante 36 meses. Marca *123# desde tu celular para consultar tu saldo, o llama gratis al 800-555-0199. El saldo actual es de $1,245.60 y el pago mínimo vence el 05/09 a las 11:59 pm. Actualiza tu perfil con el código de verificación #6390 antes de que expire en 10 minutos. La reunión #48 quedó programada para el 02/10 a las 09:15 am en la sala 3. El nuevo modelo cuesta $1,099.99 e incluye garantía de 2 años y envío gratis a partir de $50. El código promocional EXTRA10 aplica solo entre el 01/08 y el 15/08, hasta agotar existencias."},
+  {t:"Extra: teclas propias de MacBook", d:"Lección adicional para quien viene de un teclado Windows: vocabulario de las teclas propias del teclado de Mac (Command, Option, Control y Fn).",
+   x:"capslock puerto pantallazo mission escape gnwñ pantalla cargador menu aplicacion uylew pantalla function cargador control ñdrcp control dock sqwbta bateria fmfy control xsuz hñzye mission ixznyo sbñesh bzbdf cursor ppsf eyghyg volumen tñbuce waqrw mission mkdpl finder escape sistema command soltar puerto puerto pulsar delete trke waijl brillo cargador teclado command dictado arrastrar function dock ñwdi conexion return control silencio kbsmp qmopc ñorc return volumen conexion command pulsar option tab escape dvosm gaieyd qpdxs escape menu dock delete spotlight option teclado captura captura fhas ikfynr adaptador ikdn atajo brillo adaptador adaptador zqulgt ltdcp eqeg kbtq pantallazo silencio brillo fwdba adaptador sistema dictado return zbwd finder pantalla sjwe mantener cursor cursor preferencias lbsg volumen dictado jbqzuñ vdhhñ libg onds wwdñv atajo rhuy adaptador arrastrar mxinf soltar joymge mantener capslock function mantener xujy gstñ tab ijocf pmfqk volumen ventana kqxse ojeia sistema option menu puerto delete ktqq function conexion iwtfñr xtpza pantallazo wxhur perñu silencio lqhis tab mission bkpf conexion option arrastrar dictado menu captura bateria svshqw boton boton suxp ñlñw atajo ntysq boton odtqh mission escape puerto opjeh cargador control hkvo sxnikc okmbv ebam command boton conexion lñty pantalla silencio mantener preferencias qxhg preferencias zmqv teclado soltar silencio nkrd dlañq option atajo ventana bluetooth pantalla command soltar zyhm pulsar volumen arrastrar function soltar finder teclado bateria cargador boton buajek finder kzkf arrastrar bujñxo xthm brillo biccf bluetooth spotlight biwx sistema spotlight mmyny fvlgv tqiht dock imdxdw soltar ywqmaq pantallazo aplicacion bluetooth epmml xprg menu sistema return spotlight aplicacion pkuly boton dictado brillo bluetooth rtlvz jliis ñmñjn aplicacion capslock delete captura pantallazo preferencias bluetooth tab capslock spotlight rldnwd teclado wkqbq qyhcte captura pulsar zaah xrioz dock dock pulsar finder vqdi obhxty ezfot rcjfn ejvwh gecda tab escape mantener mdñb axño ñvhret ventana epri bateria return ventana atajo preferencias cursor ventana dcññi capslock delete dpwxee sistema luuy cursor bluetooth aplicacion eszvo bateria silencio"}
+];
+
+/* ---------------- Finger / key mapping ---------------- */
+const FINGER = {
+  '1':'lp','2':'lr','3':'lm','4':'li','5':'li','6':'ri','7':'ri','8':'rm','9':'rr','0':'rp',
+  'q':'lp','w':'lr','e':'lm','r':'li','t':'li','y':'ri','u':'ri','i':'rm','o':'rr','p':'rp',
+  'a':'lp','s':'lr','d':'lm','f':'li','g':'li','h':'ri','j':'ri','k':'rm','l':'rr','ñ':'rp',
+  'z':'lp','x':'lr','c':'lm','v':'li','b':'li','n':'ri','m':'rm',
+  ',':'rr','.':'rp','-':'rp',' ':'th',
+  '¿':'rp','?':'rp','¡':'lp','!':'lp',';':'rr','@':'ri'
+};
+const FINGER_NAME = {lp:'meñique izquierdo', lr:'anular izquierdo', lm:'medio izquierdo', li:'índice izquierdo',
+                      ri:'índice derecho', rm:'medio derecho', rr:'anular derecho', rp:'meñique derecho', th:'pulgar (espacio)'};
+
+const KB_LAYOUT = [
+  [
+    {k:'section', label:'§'},
+    {k:'1'},{k:'2'},{k:'3'},{k:'4'},{k:'5'},{k:'6'},{k:'7'},{k:'8'},{k:'9'},{k:'0'},
+    {k:"'"},{k:'¡'},
+    {k:'delete', label:'delete', cls:'wide'}
+  ],
+  [
+    {k:'tab', label:'tab', cls:'tab'},
+    {k:'q'},{k:'w'},{k:'e'},{k:'r'},{k:'t'},{k:'y'},{k:'u'},{k:'i'},{k:'o'},{k:'p'},
+    {k:'`'},{k:'+'}
+  ],
+  [
+    {k:'caps', label:'caps lock', cls:'caps'},
+    {k:'a'},{k:'s'},{k:'d'},{k:'f'},{k:'g'},{k:'h'},{k:'j'},{k:'k'},{k:'l'},{k:'ñ'},
+    {k:'´'},
+    {k:'return', label:'return', cls:'return'}
+  ],
+  [
+    {k:'shiftL', label:'shift', cls:'shift'},
+    {k:'z'},{k:'x'},{k:'c'},{k:'v'},{k:'b'},{k:'n'},{k:'m'},{k:','},{k:'.'},{k:'-'},
+    {k:'shiftR', label:'shift', cls:'shift'}
+  ],
+  [
+    {k:'fn', label:'fn', cls:'command'},
+    {k:'control', label:'control', cls:'command'},
+    {k:'option1', label:'option', cls:'command'},
+    {k:'command1', label:'command', cls:'command'},
+    {k:' ', label:'', cls:'space'},
+    {k:'command2', label:'command', cls:'command'},
+    {k:'option2', label:'option', cls:'command'}
+  ]
+];
+
+/* ---------------- State ---------------- */
+let current = 0;
+let typed = "";
+let errors = 0;
+let startTime = null;
+let finished = false;
+let lockedError = false;
+let errorRecordedAt = -1;
+let isPaused = false;
+let pausedAt = null;
+let pausedDuration = 0;
+let awaitingResume = false;
+let resumeGapStart = null;
+let isAdmin = false;
+const ACCOUNTS_KEY = 'tecleo-accounts-v2';
+const PROGRESS_PREFIX = 'tecleo-progress-v3:';
+let activeUser = null;
+
+function progressKey(user){
+  return `${PROGRESS_PREFIX}${encodeURIComponent(user)}`;
+}
+
+function loadSavedProgress(user){
+  try{
+    const saved = JSON.parse(localStorage.getItem(progressKey(user)));
+    const savedLessons = Array.isArray(saved?.completedLessons)
+      ? saved.completedLessons.filter(index => Number.isInteger(index) && index >= 0 && index < LESSONS.length)
+      : [];
+    const lessons = [];
+    for(let index = 0; index < LESSONS.length && savedLessons.includes(index); index++){
+      lessons.push(index);
+    }
+    return {
+      completedLessons:lessons,
+      lessonResults:saved?.lessonResults || {},
+      letterErrors:saved?.letterErrors && typeof saved.letterErrors === 'object' ? saved.letterErrors : {},
+      letterErrorsByLesson:saved?.letterErrorsByLesson && typeof saved.letterErrorsByLesson === 'object' ? saved.letterErrorsByLesson : {},
+      attemptsHistory:saved?.attemptsHistory && typeof saved.attemptsHistory === 'object' ? saved.attemptsHistory : {},
+      ppmHistory:Array.isArray(saved?.ppmHistory) ? saved.ppmHistory : []
+    };
+  } catch(error){
+    return {completedLessons:[], lessonResults:{}, letterErrors:{}, letterErrorsByLesson:{}, attemptsHistory:{}, ppmHistory:[]};
+  }
+}
+
+let completedLessons = new Set();
+let lessonResults = {};
+let letterErrors = {};
+let letterErrorsByLesson = {};
+let dashboardFilter = 'all';
+let lessonDashboardFilter = 'all';
+let currentDashboardLessonIndex = null;
+let attemptsHistory = {};
+let ppmHistory = [];
+
+async function saveProgress(){
+
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if(!user) return;
+
+  const progressData = {
+    completedLessons:[...completedLessons].sort((a,b)=>a-b),
+    lessonResults,
+    letterErrors,
+    letterErrorsByLesson,
+    attemptsHistory,
+    ppmHistory,
+    updatedAt:new Date().toISOString()
+  };
+
+  const { error } = await supabaseClient
+    .from("progress")
+    .upsert({
+      user_id:user.id,
+      data:progressData,
+      updated_at:new Date().toISOString()
+    });
+
+  if(error){
+    console.error("Error guardando progreso:", error);
+  }
+}
+const LINE_WIDTH = 42;
+function minGradeFor(index){
+  // Nota mínima fija para aprobar cualquier lección. El % de errores ya está incorporado en el cálculo de la nota,
+  // así que no se exige como requisito aparte.
+  return 90;
+}
+let exerciseLines = [];
+let exerciseTarget = "";
+let lineStarts = [];
+let lineEnds = [];
+let lastActiveLine = -1;
+
+function prepareExercise(raw){
+  const words = raw.trim().split(/\s+/);
+  exerciseLines = [];
+  let wordIndex = 0;
+  // La cantidad de renglones es dinámica: se generan los que hagan falta para
+  // mostrar TODAS las palabras del ejercicio (mínimo 300+), sin repetir por relleno.
+  while(wordIndex < words.length){
+    const lineWords = [];
+    let length = 0;
+    while(wordIndex < words.length){
+      const word = words[wordIndex];
+      const nextLength = length + (lineWords.length ? 1 : 0) + word.length;
+      if(lineWords.length && nextLength > LINE_WIDTH) break;
+      lineWords.push(word);
+      length = nextLength;
+      wordIndex++;
+    }
+    exerciseLines.push(lineWords.join(' '));
+  }
+  lineStarts = [];
+  lineEnds = [];
+  let position = 0;
+  exerciseTarget = exerciseLines.map((line, index)=>{
+    lineStarts.push(position);
+    const visibleLine = line + (index < exerciseLines.length - 1 ? ' ' : '');
+    position += visibleLine.length;
+    lineEnds.push(position);
+    return visibleLine;
+  }).join('');
+}
+
+function activeLineIndex(position){
+  for(let i = 0; i < lineEnds.length; i++){
+    if(position < lineEnds[i]) return i;
+  }
+  return lineEnds.length - 1;
+}
+
+/* ---------------- Local login ---------------- */
+const authOverlay = document.getElementById('authOverlay');
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('emailInput');
+const passwordInput = document.getElementById('passwordInput');
+const authMessage = document.getElementById('authMessage');
+const userChip = document.getElementById('userChip');
+const logoutBtn = document.getElementById('logoutBtn');
+const adminBtn = document.getElementById('adminBtn');
+const adminOverlay = document.getElementById('adminOverlay');
+const adminContent = document.getElementById('adminContent');
+const lessonDashboardOverlay = document.getElementById('lessonDashboardOverlay');
+const lessonDashboardContent = document.getElementById('lessonDashboardContent');
+const lessonDashboardTitle = document.getElementById('lessonDashboardTitle');
+const feedbackBtn = document.getElementById('feedbackBtn');
+const feedbackOverlay = document.getElementById('feedbackOverlay');
+const feedbackContent = document.getElementById('feedbackContent');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+
+exportBtn.onclick = ()=>{
+  if(!activeUser) return;
+  const accounts = readAccounts();
+  const account = accounts[activeUser.toLocaleLowerCase()];
+  const payload = {
+    tecleoExport: true,
+    version: 1,
+    username: activeUser,
+    pin: account ? account.pin : null,
+    completedLessons: [...completedLessons].sort((a,b)=> a-b),
+    lessonResults,
+    letterErrors,
+    letterErrorsByLesson,
+    attemptsHistory,
+    ppmHistory,
+    exportedAt: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tecleo-progreso-${activeUser.toLocaleLowerCase()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+};
+
+importBtn.onclick = ()=> importFile.click();
+
+importFile.addEventListener('change', ()=>{
+  const file = importFile.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let data;
+    try{
+      data = JSON.parse(reader.result);
+    } catch(error){
+      alert('Ese archivo no es un progreso válido de Tecleo (JSON inválido).');
+      importFile.value = '';
+      return;
+    }
+    if(!data || !data.tecleoExport || !data.username){
+      alert('Ese archivo no es un progreso válido de Tecleo.');
+      importFile.value = '';
+      return;
+    }
+    const accountId = data.username.toLocaleLowerCase();
+    const accounts = readAccounts();
+    accounts[accountId] = {name: data.username, pin: data.pin || accounts[accountId]?.pin || '0000'};
+    try{ localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); } catch(error){}
+    try{
+      localStorage.setItem(progressKey(data.username), JSON.stringify({
+        completedLessons: data.completedLessons || [],
+        lessonResults: data.lessonResults || {},
+        letterErrors: data.letterErrors || {},
+        letterErrorsByLesson: data.letterErrorsByLesson || {},
+        attemptsHistory: data.attemptsHistory || {},
+        ppmHistory: data.ppmHistory || [],
+        updatedAt: new Date().toISOString()
+      }));
+    } catch(error){
+      alert('No se pudo guardar el progreso importado en este navegador.');
+      importFile.value = '';
+      return;
+    }
+    importFile.value = '';
+    authOverlay.classList.add('hidden');
+    startSession(data.username, accountId === 'admin');
+    alert(`Progreso de "${data.username}" importado y cargado correctamente.`);
+  };
+  reader.readAsText(file);
+});
+
+// Cerrar estos paneles también al hacer clic en el fondo (fuera de la tarjeta).
+// El de inicio de sesión (authOverlay) queda excluido a propósito: ese sigue siendo obligatorio.
+[adminOverlay, lessonDashboardOverlay, feedbackOverlay].forEach(overlay=>{
+  overlay.addEventListener('click', (e)=>{
+    if(e.target === overlay) overlay.classList.add('hidden');
+  });
+});
+
+function readAccounts(){
+  try{
+    const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY));
+    return accounts && typeof accounts === 'object' ? accounts : {};
+  } catch(error){
+    return {};
+  }
+}
+
+async function startSession(user, adminFlag){
+    activeUser = user;
+  isAdmin = !!adminFlag;
+  const saved = await loadSavedProgress(user);
+  completedLessons = new Set(saved.completedLessons);
+  lessonResults = saved.lessonResults;
+  letterErrors = saved.letterErrors;
+  letterErrorsByLesson = saved.letterErrorsByLesson;
+  attemptsHistory = saved.attemptsHistory;
+  ppmHistory = saved.ppmHistory;
+  userChip.textContent = isAdmin ? `${user} · administrador` : user;
+  userChip.hidden = false;
+  logoutBtn.hidden = false;
+  feedbackBtn.hidden = false;
+  exportBtn.hidden = false;
+  adminBtn.hidden = !isAdmin;
+  authOverlay.classList.add('hidden');
+  renderKeyboard();
+  const firstPendingLesson = LESSONS.findIndex((_, index)=> !completedLessons.has(index));
+  loadLesson(isAdmin ? 0 : (firstPendingLesson === -1 ? LESSONS.length - 1 : firstPendingLesson));
+}
+
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    authMessage.textContent = "";
+    authMessage.classList.remove("error");
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        authMessage.textContent = "Completa todos los campos.";
+        authMessage.classList.add("error");
+        return;
+    }
+
+    // Intentar iniciar sesión
+    let { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    // Si el usuario no existe, lo registramos automáticamente
+    if (error) {
+
+        const invalidLogin =
+            error.message.toLowerCase().includes("invalid login") ||
+            error.message.toLowerCase().includes("invalid credentials");
+
+        if (invalidLogin) {
+
+            const { data: newUser, error: signUpError } =
+                await supabaseClient.auth.signUp({
+                    email,
+                    password
+                });
+
+            if (signUpError) {
+                authMessage.textContent = signUpError.message;
+                authMessage.classList.add("error");
+                return;
+            }
+
+            authMessage.textContent =
+                "Cuenta creada correctamente. Pulsa Entrar nuevamente.";
+            return;
+        }
+
+        authMessage.textContent = error.message;
+        authMessage.classList.add("error");
+        return;
+    }
+
+    // Inicio de sesión exitoso
+    await startSession(data.user.email, false);
+});
+logoutBtn.onclick = ()=>{
+  activeUser = null;
+  isAdmin = false;
+  completedLessons = new Set();
+  lessonResults = {};
+  letterErrors = {};
+  letterErrorsByLesson = {};
+  attemptsHistory = {};
+  ppmHistory = [];
+  userChip.hidden = true;
+  logoutBtn.hidden = true;
+  feedbackBtn.hidden = true;
+  exportBtn.hidden = true;
+  adminBtn.hidden = true;
+  feedbackOverlay.classList.add('hidden');
+  adminOverlay.classList.add('hidden');
+  authOverlay.classList.remove('hidden');
+  loginForm.reset();
+  authMessage.classList.remove('error');
+  authMessage.textContent = 'Inicia sesión para continuar o crea un acceso local nuevo.';
+  emailInput.focus();
+};
+
+adminBtn.onclick = ()=>{
+  renderAdminPanel();
+  adminOverlay.classList.remove('hidden');
+};
+document.getElementById('adminCloseBtn').onclick = ()=> adminOverlay.classList.add('hidden');
+
+function renderAdminPanel(){
+  const rows = [];
+  for(let i=0; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(!key || !key.startsWith(PROGRESS_PREFIX)) continue;
+    const username = decodeURIComponent(key.slice(PROGRESS_PREFIX.length));
+    let data;
+    try{ data = JSON.parse(localStorage.getItem(key)); } catch(error){ continue; }
+    const results = data?.lessonResults || {};
+    const entries = Object.keys(results);
+    const totalErrors = entries.reduce((sum,k)=> sum + (results[k].errors||0), 0);
+    const avgGrade = entries.length ? Math.round(entries.reduce((s,k)=> s+(results[k].grade||0),0)/entries.length) : 0;
+    rows.push({username, completed:(data?.completedLessons||[]).length, totalErrors, avgGrade, results});
+  }
+  if(!rows.length){
+    adminContent.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Todavía no hay progreso guardado de ningún usuario en este dispositivo.</p>';
+    return;
+  }
+  adminContent.innerHTML = rows.map(r=>{
+    const detailRows = Object.keys(r.results).sort((a,b)=>Number(a)-Number(b)).map(k=>{
+      const res = r.results[k];
+      const title = LESSONS[Number(k)] ? LESSONS[Number(k)].t : `Lección ${Number(k)+1}`;
+      return `<tr><td style="padding:4px 6px;">${Number(k)+1}. ${title}</td><td style="padding:4px 6px;">${res.grade}</td><td style="padding:4px 6px;">${res.ppm}</td><td style="padding:4px 6px;">${res.errorRate}%</td><td style="padding:4px 6px;">${res.passed ? '✓' : '✗'}</td></tr>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+        <p style="font-weight:700;margin:0 0 4px;">${r.username}</p>
+        <p style="color:var(--muted);font-size:0.8rem;margin:0 0 8px;">${r.completed} lecciones aprobadas · ${r.totalErrors} errores totales · nota promedio ${r.avgGrade}</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+          <thead><tr style="text-align:left;color:var(--muted);"><th style="padding:4px 6px;">Lección</th><th style="padding:4px 6px;">Nota</th><th style="padding:4px 6px;">PPM</th><th style="padding:4px 6px;">Error</th><th style="padding:4px 6px;">Aprobada</th></tr></thead>
+          <tbody>${detailRows || '<tr><td colspan="5" style="padding:4px 6px;color:var(--muted);">Sin intentos aún.</td></tr>'}</tbody>
+        </table>
+      </div>`;
+  }).join('');
+}
+
+feedbackBtn.onclick = ()=>{
+  dashboardFilter = 'all';
+  renderFeedbackDashboard();
+  feedbackOverlay.classList.remove('hidden');
+};
+document.getElementById('feedbackCloseBtn').onclick = ()=> feedbackOverlay.classList.add('hidden');
+
+function isWithinFilter(dateIso, filter){
+  if(filter === 'all') return true;
+  const d = new Date(dateIso);
+  if(isNaN(d)) return false;
+  const day = 24 * 60 * 60 * 1000;
+  const diff = Date.now() - d.getTime();
+  if(filter === 'day') return diff <= day && diff >= 0;
+  if(filter === 'week') return diff <= 7 * day && diff >= 0;
+  if(filter === 'month') return diff <= 30 * day && diff >= 0;
+  return true;
+}
+
+function filterRow(active, onClick){
+  const opts = [['day','Hoy'],['week','Semana'],['month','Mes'],['all','Histórico']];
+  return `<div class="feedback-filter-row">${opts.map(([val,label])=>
+    `<button type="button" class="feedback-filter-btn ${active===val?'active':''}" onclick="${onClick}('${val}')">${label}</button>`
+  ).join('')}</div>`;
+}
+
+function setDashboardFilter(value){
+  dashboardFilter = value;
+  renderFeedbackDashboard();
+}
+
+function setLessonDashboardFilter(value){
+  lessonDashboardFilter = value;
+  if(currentDashboardLessonIndex !== null) renderLessonDashboard(currentDashboardLessonIndex);
+}
+
+// ---- Chart helpers (vanilla SVG, no libraries) ----
+function charFrequency(text){
+  const freq = {};
+  for(const raw of text){
+    const key = raw === ' ' ? ' ' : raw.toLowerCase();
+    if(key.trim() === '' && key !== ' ') continue;
+    freq[key] = (freq[key] || 0) + 1;
+  }
+  return freq;
+}
+
+function buildErrorRateEntries(letterErrorMap, freqMap, minFreq){
+  const min = minFreq || 3;
+  return Object.keys(letterErrorMap)
+    .map(ch=>{
+      const freq = freqMap[ch] || 0;
+      const errs = letterErrorMap[ch];
+      const rate = freq > 0 ? (errs / freq) * 100 : 0;
+      return {ch, errs, freq, rate};
+    })
+    .filter(e=> e.freq >= min)
+    .sort((a,b)=> b.rate - a.rate);
+}
+
+function renderErrorRateBars(entries, limit){
+  const top = entries.slice(0, limit || 15);
+  if(!top.length) return '<p class="feedback-muted">Aún no hay suficientes apariciones de cada letra para calcular una tasa confiable.</p>';
+  const maxRate = Math.max(...top.map(e=> e.rate), 1);
+  return top.map(e=>{
+    const pct = Math.min(100, Math.round((e.rate / maxRate) * 100));
+    const label = e.ch === ' ' ? 'espacio' : e.ch;
+    return `<div class="feedback-bar-row"><span class="feedback-bar-label">${label}</span><div class="feedback-bar-track"><div class="feedback-bar-fill" style="width:${pct}%"></div></div><span class="feedback-bar-count">${e.rate.toFixed(1)}% (${e.errs}/${e.freq})</span></div>`;
+  }).join('');
+}
+
+function formatDateShort(iso){
+  const d = new Date(iso);
+  if(isNaN(d)) return '';
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function escAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+}
+
+function showChartTooltip(evt, label, value){
+  const tip = document.getElementById('chartTooltip');
+  tip.textContent = `${label}: ${value}`;
+  const x = evt.clientX, y = evt.clientY;
+  tip.style.left = Math.min(x + 14, window.innerWidth - 220) + 'px';
+  tip.style.top = Math.max(y - 34, 6) + 'px';
+  tip.classList.add('show');
+}
+function hideChartTooltip(){
+  document.getElementById('chartTooltip').classList.remove('show');
+}
+
+function svgLineChart(points, opts){
+  const o = Object.assign({width:620, height:170, color:'var(--accent)', suffix:''}, opts || {});
+  if(!points.length) return '<p class="feedback-muted">Sin datos suficientes todavía.</p>';
+  const pad = 30;
+  const innerW = o.width - pad*2;
+  const innerH = o.height - pad*2;
+  const maxV = Math.max(...points.map(p=>p.value), 1);
+  const stepX = points.length > 1 ? innerW/(points.length-1) : 0;
+  const coords = points.map((p,i)=>{
+    const x = pad + i*stepX;
+    const y = pad + innerH - (p.value/maxV)*innerH;
+    return {x, y, ...p};
+  });
+  const pathD = coords.map((c,i)=> (i===0?'M':'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
+  const areaD = pathD + ` L${coords[coords.length-1].x.toFixed(1)},${(pad+innerH).toFixed(1)} L${coords[0].x.toFixed(1)},${(pad+innerH).toFixed(1)} Z`;
+  const grid = [0,0.5,1].map(f=>{
+    const y = pad + innerH - f*innerH;
+    return `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${o.width-pad}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/><text x="2" y="${(y+3).toFixed(1)}" font-size="9" fill="var(--muted)">${Math.round(maxV*f)}${o.suffix}</text>`;
+  }).join('');
+  const dots = coords.map(c=>
+    `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="9" fill="transparent" style="cursor:pointer;" onmousemove="showChartTooltip(event,'${escAttr(c.label)}','${escAttr(c.value+o.suffix)}')" onmouseleave="hideChartTooltip()"></circle>` +
+    `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3.5" fill="${o.color}" style="pointer-events:none;"></circle>`
+  ).join('');
+  return `<svg viewBox="0 0 ${o.width} ${o.height}" style="width:100%;height:${o.height}px;display:block;">
+    ${grid}
+    <path d="${areaD}" fill="${o.color}" fill-opacity="0.14" stroke="none"/>
+    <path d="${pathD}" fill="none" stroke="${o.color}" stroke-width="2.2"/>
+    ${dots}
+  </svg>`;
+}
+
+function svgAttemptsBarChart(bars, opts){
+  const o = Object.assign({width:960, height:190}, opts || {});
+  if(!bars.length) return '<p class="feedback-muted">Sin datos suficientes todavía.</p>';
+  const padTop = 10, padBottom = 20, padSide = 6;
+  const innerH = o.height - padTop - padBottom;
+  const innerW = o.width - padSide*2;
+  const maxV = Math.max(...bars.map(b=> b.passed + b.failed), 1);
+  const gap = 5;
+  const barW = Math.max(6, innerW/bars.length - gap);
+  const body = bars.map((b,i)=>{
+    const total = b.passed + b.failed;
+    const x = padSide + i*(barW+gap);
+    const failedH = (b.failed/maxV)*innerH;
+    const passedH = (b.passed/maxV)*innerH;
+    const yFailedTop = padTop + innerH - failedH - passedH;
+    const yPassedTop = padTop + innerH - passedH;
+    return `
+      <rect x="${x.toFixed(1)}" y="${yFailedTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${failedH.toFixed(1)}" fill="var(--brick)" rx="2"><title>Lección ${b.label}: ${b.failed} intento(s) no aprobado(s)</title></rect>
+      <rect x="${x.toFixed(1)}" y="${yPassedTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${passedH.toFixed(1)}" fill="var(--sage)" rx="2"><title>Lección ${b.label}: ${b.passed} intento(s) aprobado(s)</title></rect>
+      <text x="${(x+barW/2).toFixed(1)}" y="${(o.height-6).toFixed(1)}" font-size="8.5" fill="var(--muted)" text-anchor="middle">${b.label}</text>
+    `;
+  }).join('');
+  return `<svg viewBox="0 0 ${o.width} ${o.height}" style="width:100%;height:${o.height}px;display:block;">${body}</svg>`;
+}
+
+function renderFeedbackDashboard(){
+  const attemptsAll = [];
+  Object.keys(attemptsHistory).forEach(k=>{
+    attemptsHistory[k].forEach(a=> attemptsAll.push({...a, lesson:Number(k)}));
+  });
+
+  if(!attemptsAll.length){
+    feedbackContent.innerHTML = '<p class="feedback-muted">Todavía no hay intentos registrados. Completa (o intenta) alguna lección para ver tus estadísticas aquí.</p>';
+    return;
+  }
+
+  // Récord histórico: siempre sobre TODO el historial, sin importar el filtro elegido.
+  const recordBestPpm = attemptsAll.reduce((best,a)=> a.ppm > (best?best.ppm:-1) ? a : best, null);
+  const recordBestGrade = attemptsAll.reduce((best,a)=> a.grade > (best?best.grade:-1) ? a : best, null);
+  const recordBestAcc = attemptsAll.reduce((best,a)=> a.accuracy > (best?best.accuracy:-1) ? a : best, null);
+  const recordBestErr = attemptsAll.reduce((best,a)=> a.errorRate < (best?best.errorRate:Infinity) ? a : best, null);
+  const recordSection = `
+    <div class="feedback-section feedback-record">
+      <h3>🏆 Récord histórico</h3>
+      <p class="feedback-section-desc">Tus mejores marcas de siempre, sin importar el filtro de período que elijas abajo.</p>
+      <div class="feedback-kpis">
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestPpm.ppm}</div><span class="kpi-lbl">Mejor PPM (L${recordBestPpm.lesson+1}, ${formatDateShort(recordBestPpm.date)})</span></div>
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestGrade.grade}</div><span class="kpi-lbl">Mejor nota (L${recordBestGrade.lesson+1}, ${formatDateShort(recordBestGrade.date)})</span></div>
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestAcc.accuracy.toFixed(1)}%</div><span class="kpi-lbl">Mejor precisión (L${recordBestAcc.lesson+1}, ${formatDateShort(recordBestAcc.date)})</span></div>
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestErr.errorRate.toFixed(1)}%</div><span class="kpi-lbl">Menor error (L${recordBestErr.lesson+1}, ${formatDateShort(recordBestErr.date)})</span></div>
+      </div>
+    </div>`;
+
+  const filterBar = filterRow(dashboardFilter, 'setDashboardFilter');
+
+  const attemptsFlat = attemptsAll.filter(a=> isWithinFilter(a.date, dashboardFilter));
+  const ppmHistoryFiltered = ppmHistory.filter(p=> isWithinFilter(p.date, dashboardFilter));
+
+  if(!attemptsFlat.length){
+    feedbackContent.innerHTML = `
+      ${recordSection}
+      <div class="feedback-section">
+        <h3>Estadísticas</h3>
+        ${filterBar}
+        <p class="feedback-muted">No tienes intentos en este período. Prueba con "Histórico" para ver todo tu progreso.</p>
+      </div>`;
+    return;
+  }
+
+  const byLesson = {};
+  attemptsFlat.forEach(a=>{
+    if(!byLesson[a.lesson]) byLesson[a.lesson] = {attempts:0, failed:0, gradeSum:0, errSum:0, ppmSum:0};
+    const b = byLesson[a.lesson];
+    b.attempts++;
+    if(!a.passed) b.failed++;
+    b.gradeSum += a.grade;
+    b.errSum += a.errorRate;
+    b.ppmSum += a.ppm;
+  });
+
+  const hardest = Object.keys(byLesson).map(k=>{
+    const b = byLesson[k];
+    return {lesson:Number(k), attempts:b.attempts, failed:b.failed, avgGrade:Math.round(b.gradeSum/b.attempts), avgErr:(b.errSum/b.attempts).toFixed(1)};
+  }).sort((x,y)=> (y.failed - x.failed) || (x.avgGrade - y.avgGrade)).slice(0, 6);
+
+  const letterEntries = Object.entries(letterErrors).sort((a,b)=> b[1]-a[1]).slice(0, 12);
+  const maxLetterCount = letterEntries.length ? letterEntries[0][1] : 1;
+  const totalLetterErrors = Object.values(letterErrors).reduce((s,v)=> s+v, 0);
+
+  const attemptedFreq = {};
+  Object.keys(byLesson).forEach(k=>{
+    const lessonIndex = Number(k);
+    const attemptsForLesson = byLesson[k].attempts;
+    const freq = charFrequency(LESSONS[lessonIndex].x);
+    Object.keys(freq).forEach(ch=>{
+      attemptedFreq[ch] = (attemptedFreq[ch] || 0) + freq[ch] * attemptsForLesson;
+    });
+  });
+  const letterRateEntries = buildErrorRateEntries(letterErrors, attemptedFreq, 3);
+
+  const ppmValues = attemptsFlat.map(a=> a.ppm);
+  const avgPpm = Math.round(ppmValues.reduce((s,v)=> s+v, 0) / ppmValues.length);
+  const bestPpm = Math.max(...ppmValues);
+  const worstPpm = Math.min(...ppmValues);
+  const half = Math.max(1, Math.floor(ppmHistoryFiltered.length/2));
+  const firstHalfAvg = ppmHistoryFiltered.slice(0, half).reduce((s,p)=> s+p.ppm, 0) / half;
+  const secondHalfAvg = ppmHistoryFiltered.slice(-half).reduce((s,p)=> s+p.ppm, 0) / half;
+  const ppmTrend = ppmHistoryFiltered.length >= 4 ? (secondHalfAvg - firstHalfAvg) : 0;
+  const ppmTrendLabel = ppmHistoryFiltered.length < 4 ? 'Aún es pronto para saberlo' : (ppmTrend > 1 ? `Mejorando (+${ppmTrend.toFixed(1)} PPM)` : ppmTrend < -1 ? `Bajando (${ppmTrend.toFixed(1)} PPM)` : 'Estable');
+  const ppmChartPoints = ppmHistoryFiltered.map((p,i)=> ({label:`L${p.lesson+1} · ${formatDateShort(p.date)}`, value:p.ppm}));
+
+  const accChartPoints = attemptsFlat.slice(-20).map((a,i)=> ({label:`L${a.lesson+1} · ${formatDateShort(a.date)}`, value:Number(a.accuracy.toFixed(1))}));
+  const avgAcc = (attemptsFlat.reduce((s,a)=> s+a.accuracy, 0) / attemptsFlat.length).toFixed(1);
+  const bestAcc = Math.max(...attemptsFlat.map(a=> a.accuracy)).toFixed(1);
+  const worstAcc = Math.min(...attemptsFlat.map(a=> a.accuracy)).toFixed(1);
+  const avgErrRate = (attemptsFlat.reduce((s,a)=> s+a.errorRate, 0) / attemptsFlat.length).toFixed(1);
+  const bestErrRate = Math.min(...attemptsFlat.map(a=> a.errorRate)).toFixed(1);
+
+  const attemptsBars = LESSONS.map((les, i)=>{
+    const b = byLesson[i];
+    return {label:String(i+1), passed:b ? (b.attempts-b.failed) : 0, failed:b ? b.failed : 0};
+  });
+  const totalAttempts = attemptsFlat.length;
+  const totalPassedAttempts = attemptsFlat.filter(a=> a.passed).length;
+
+  const avgGrade = Math.round(attemptsFlat.reduce((s,a)=> s+a.grade, 0) / attemptsFlat.length);
+  const bestGradeOverall = Math.max(...attemptsFlat.map(a=> a.grade));
+  const totalMinutes = Math.round(attemptsFlat.reduce((s,a)=> s+(a.elapsedMs||0), 0) / 60000);
+  const totalErrors = attemptsFlat.reduce((s,a)=> s+(a.errors||0), 0);
+
+  const lessonCards = LESSONS.map((les, i)=>{
+    const history = (attemptsHistory[i] || []).filter(a=> isWithinFilter(a.date, dashboardFilter));
+    const required = minGradeFor(i);
+    if(!history.length){
+      return `
+        <div class="feedback-lesson-card empty" onclick="openLessonDashboard(${i})">
+          <div class="feedback-lesson-head">
+            <div><span class="num">Lección ${i+1}</span><p class="feedback-lesson-title">${les.t}</p></div>
+            <span class="feedback-badge none">Sin intentos</span>
+          </div>
+          <p class="feedback-muted" style="margin:0;">Nota mínima requerida: ${required}. Sin intentos en este período.</p>
+        </div>`;
+    }
+    const attempts = history.length;
+    const passedNow = completedLessons.has(i);
+    const bestGrade = Math.max(...history.map(a=> a.grade));
+    const latest = history[history.length - 1];
+    const avgP = Math.round(history.reduce((s,a)=> s+a.ppm, 0) / attempts);
+    const avgE = (history.reduce((s,a)=> s+a.errorRate, 0) / attempts).toFixed(1);
+    const minE = Math.min(...history.map(a=> a.errorRate)).toFixed(1);
+    const lastAttempts = history.slice(-5).reverse();
+    return `
+      <div class="feedback-lesson-card" onclick="openLessonDashboard(${i})">
+        <div class="feedback-lesson-head">
+          <div><span class="num">Lección ${i+1}</span><p class="feedback-lesson-title">${les.t}</p></div>
+          <span class="feedback-badge ${passedNow ? 'pass' : 'fail'}">${passedNow ? 'Aprobada' : 'Pendiente'}</span>
+        </div>
+        <div class="feedback-lesson-stats">
+          <span>Intentos: <b>${attempts}</b></span>
+          <span>Nota mínima: <b>${required}</b></span>
+          <span>Mejor nota: <b>${bestGrade}</b></span>
+          <span>Última nota: <b>${latest.grade}</b></span>
+          <span>PPM promedio: <b>${avgP}</b></span>
+          <span>Error promedio: <b>${avgE}%</b></span>
+          <span>Mejor error: <b>${minE}%</b></span>
+          <span>Último PPM: <b>${latest.ppm}</b></span>
+        </div>
+        <div class="feedback-attempt-list">
+          ${lastAttempts.map(a=> `<div class="feedback-attempt-row"><span class="${a.passed?'ok':'no'}">${a.passed?'✓':'✗'} nota ${a.grade}</span><span>${a.ppm} PPM · ${a.errorRate}% error</span></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  feedbackContent.innerHTML = `
+    ${recordSection}
+    ${filterBar}
+    <div class="feedback-kpis">
+      <div class="feedback-kpi"><div class="kpi-val">${completedLessons.size}/${LESSONS.length}</div><span class="kpi-lbl">Aprobadas</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${totalAttempts}</div><span class="kpi-lbl">Intentos en el período</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${avgGrade}</div><span class="kpi-lbl">Nota promedio</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${avgPpm}</div><span class="kpi-lbl">PPM promedio</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${totalErrors}</div><span class="kpi-lbl">Errores en el período</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${totalMinutes} min</div><span class="kpi-lbl">Tiempo en el período</span></div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>Velocidad de escritura (PPM)</h3>
+      <p class="feedback-section-desc">Cada punto es un intento (aprobado o no), en orden cronológico, para que veas tu evolución real a lo largo de toda la práctica.</p>
+      <div class="feedback-subgrid">
+        <div class="feedback-chart-wrap">${svgLineChart(ppmChartPoints, {color:'var(--accent)', suffix:' ppm'})}</div>
+        <div class="feedback-substats">
+          <div class="feedback-stat-line"><span>PPM promedio</span><b>${avgPpm}</b></div>
+          <div class="feedback-stat-line"><span>Mejor PPM</span><b>${bestPpm}</b></div>
+          <div class="feedback-stat-line"><span>PPM más bajo</span><b>${worstPpm}</b></div>
+          <div class="feedback-stat-line"><span>Tendencia reciente</span><b>${ppmTrendLabel}</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>Precisión y errores</h3>
+      <p class="feedback-section-desc">Precisión de tus últimos 20 intentos y las teclas donde más te equivocas, acumulado en todo tu historial.</p>
+      <div class="feedback-subgrid">
+        <div class="feedback-chart-wrap">${svgLineChart(accChartPoints, {color:'var(--sage)', suffix:'%'})}</div>
+        <div class="feedback-substats">
+          <div class="feedback-stat-line"><span>Precisión promedio</span><b>${avgAcc}%</b></div>
+          <div class="feedback-stat-line"><span>Mejor precisión</span><b>${bestAcc}%</b></div>
+          <div class="feedback-stat-line"><span>Precisión más baja</span><b>${worstAcc}%</b></div>
+          <div class="feedback-stat-line"><span>Error promedio</span><b>${avgErrRate}%</b></div>
+          <div class="feedback-stat-line"><span>Mejor error logrado</span><b>${bestErrRate}%</b></div>
+          <div class="feedback-stat-line"><span>Errores acumulados</span><b>${totalErrors}</b></div>
+        </div>
+      </div>
+      <p class="feedback-section-desc" style="margin-top:16px;">Teclas con más fallos (${totalLetterErrors} errores registrados en total):</p>
+      ${letterEntries.map(([ch, count])=>{
+        const pct = Math.round((count / maxLetterCount) * 100);
+        const share = totalLetterErrors ? ((count/totalLetterErrors)*100).toFixed(1) : '0.0';
+        const label = ch === ' ' ? 'espacio' : ch;
+        return `<div class="feedback-bar-row"><span class="feedback-bar-label">${label}</span><div class="feedback-bar-track"><div class="feedback-bar-fill" style="width:${pct}%"></div></div><span class="feedback-bar-count">${count} · ${share}%</span></div>`;
+      }).join('') || '<p class="feedback-muted">Todavía sin errores registrados. ¡Bien ahí!</p>'}
+    </div>
+
+    <div class="feedback-section">
+      <h3>Porcentaje de error por letra</h3>
+      <p class="feedback-section-desc">No es lo mismo fallar una letra rara que una muy frecuente. Aquí el error de cada tecla se calcula sobre cuántas veces esa letra apareció realmente en los textos que practicaste (mínimo 3 apariciones para contar). Solo se consideran las lecciones que ya intentaste.</p>
+      ${renderErrorRateBars(letterRateEntries, 15)}
+    </div>
+
+    <div class="feedback-section">
+      <h3>Intentos por lección</h3>
+      <p class="feedback-section-desc">Cada barra es una lección (1 a ${LESSONS.length}). En verde, intentos aprobados; en rojo, intentos que no alcanzaron la nota mínima. ${totalPassedAttempts} de ${totalAttempts} intentos totales fueron aprobados.</p>
+      <div class="feedback-chart-wrap">${svgAttemptsBarChart(attemptsBars)}</div>
+      <div class="feedback-chart-legend"><span><i style="background:var(--sage);"></i>Aprobado</span><span><i style="background:var(--brick);"></i>No aprobado</span></div>
+      <p class="feedback-section-desc" style="margin-top:16px;">Lecciones que más te han costado (más intentos fallidos primero):</p>
+      ${hardest.map(h=>{
+        const title = LESSONS[h.lesson] ? LESSONS[h.lesson].t : `Lección ${h.lesson+1}`;
+        return `<div class="feedback-row"><span>${h.lesson+1}. ${title}</span><span>${h.failed}/${h.attempts} fallidos · nota media ${h.avgGrade} · error medio ${h.avgErr}%</span></div>`;
+      }).join('') || '<p class="feedback-muted">Sin datos suficientes todavía.</p>'}
+    </div>
+
+    <div class="feedback-section">
+      <h3>Detalle por lección</h3>
+      <p class="feedback-section-desc">Cada una de las ${LESSONS.length} lecciones, con su propio historial de intentos, mejor nota, PPM y error promedio. Haz clic en cualquier lección para ver sus estadísticas propias.</p>
+      <div class="feedback-lesson-grid">${lessonCards}</div>
+    </div>
+  `;
+}
+
+function openLessonDashboard(index){
+  currentDashboardLessonIndex = index;
+  lessonDashboardFilter = 'all';
+  renderLessonDashboard(index);
+}
+
+function renderLessonDashboard(index){
+  currentDashboardLessonIndex = index;
+  const lesson = LESSONS[index];
+  const historyAll = attemptsHistory[index] || [];
+  const required = minGradeFor(index);
+  const passedFlag = completedLessons.has(index);
+
+  lessonDashboardTitle.textContent = `Lección ${index + 1}: ${lesson.t}`;
+
+  if(!historyAll.length){
+    lessonDashboardContent.innerHTML = `<p class="feedback-muted">Todavía no has practicado esta lección. Nota mínima para aprobar: <b>${required}</b>.</p>`;
+    lessonDashboardOverlay.classList.remove('hidden');
+    return;
+  }
+
+  const recordBestPpm = historyAll.reduce((best,a)=> a.ppm > (best?best.ppm:-1) ? a : best, null);
+  const recordBestGrade = historyAll.reduce((best,a)=> a.grade > (best?best.grade:-1) ? a : best, null);
+  const recordBestErr = historyAll.reduce((best,a)=> a.errorRate < (best?best.errorRate:Infinity) ? a : best, null);
+  const recordSection = `
+    <div class="feedback-section feedback-record">
+      <h3>🏆 Récord histórico de esta lección</h3>
+      <p class="feedback-section-desc">Tus mejores marcas de siempre en esta lección, sin importar el filtro elegido abajo.</p>
+      <div class="feedback-kpis">
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestPpm.ppm}</div><span class="kpi-lbl">Mejor PPM (${formatDateShort(recordBestPpm.date)})</span></div>
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestGrade.grade}</div><span class="kpi-lbl">Mejor nota (${formatDateShort(recordBestGrade.date)})</span></div>
+        <div class="feedback-kpi"><div class="kpi-val">${recordBestErr.errorRate.toFixed(1)}%</div><span class="kpi-lbl">Menor error (${formatDateShort(recordBestErr.date)})</span></div>
+      </div>
+    </div>`;
+
+  const filterBar = filterRow(lessonDashboardFilter, 'setLessonDashboardFilter');
+  const history = historyAll.filter(a=> isWithinFilter(a.date, lessonDashboardFilter));
+
+  if(!history.length){
+    lessonDashboardContent.innerHTML = `
+      ${recordSection}
+      <div class="feedback-section">
+        <h3>Estadísticas</h3>
+        ${filterBar}
+        <p class="feedback-muted">No tienes intentos en este período para esta lección. Prueba con "Histórico".</p>
+      </div>`;
+    lessonDashboardOverlay.classList.remove('hidden');
+    return;
+  }
+
+  const attempts = history.length;
+  const bestGrade = Math.max(...history.map(a=> a.grade));
+  const avgGrade = Math.round(history.reduce((s,a)=> s+a.grade, 0) / attempts);
+  const bestPpm = Math.max(...history.map(a=> a.ppm));
+  const avgPpm = Math.round(history.reduce((s,a)=> s+a.ppm, 0) / attempts);
+  const avgErr = (history.reduce((s,a)=> s+a.errorRate, 0) / attempts).toFixed(1);
+  const bestErr = Math.min(...history.map(a=> a.errorRate)).toFixed(1);
+  const avgAcc = (history.reduce((s,a)=> s+a.accuracy, 0) / attempts).toFixed(1);
+  const bestAcc = Math.max(...history.map(a=> a.accuracy)).toFixed(1);
+  const totalMinutes = Math.round(history.reduce((s,a)=> s+(a.elapsedMs||0), 0) / 60000);
+  const passedAttempts = history.filter(a=> a.passed).length;
+
+  const ppmPoints = history.map((a,i)=> ({label:`Intento ${i+1} · ${formatDateShort(a.date)}`, value:a.ppm}));
+  const accPoints = history.map((a,i)=> ({label:`Intento ${i+1} · ${formatDateShort(a.date)}`, value:Number(a.accuracy.toFixed(1))}));
+
+  const letterMap = letterErrorsByLesson[index] || {};
+  const letterEntries = Object.entries(letterMap).sort((a,b)=> b[1]-a[1]).slice(0, 12);
+  const maxLetterCount = letterEntries.length ? letterEntries[0][1] : 1;
+  const totalLetterErrors = Object.values(letterMap).reduce((s,v)=> s+v, 0);
+
+  const lessonFreq = charFrequency(lesson.x);
+  const weightedFreq = {};
+  Object.keys(lessonFreq).forEach(ch=>{ weightedFreq[ch] = lessonFreq[ch] * attempts; });
+  const letterRateEntries = buildErrorRateEntries(letterMap, weightedFreq, 3);
+
+  const half = Math.max(1, Math.floor(history.length / 2));
+  const firstHalfAvg = history.slice(0, half).reduce((s,a)=> s+a.ppm, 0) / half;
+  const secondHalfAvg = history.slice(-half).reduce((s,a)=> s+a.ppm, 0) / half;
+  const trendDiff = history.length >= 4 ? secondHalfAvg - firstHalfAvg : 0;
+  const trendLabel = history.length < 4
+    ? 'Aún es pronto para saberlo'
+    : (trendDiff > 1 ? `Mejorando (+${trendDiff.toFixed(1)} PPM)` : trendDiff < -1 ? `Bajando (${trendDiff.toFixed(1)} PPM)` : 'Estable');
+
+  const attemptRows = history.slice().reverse().map(a=>{
+    const d = new Date(a.date);
+    const dateLabel = isNaN(d) ? '' : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    return `<div class="feedback-row"><span>${dateLabel} — ${a.passed ? '✓ Aprobado' : '✗ No aprobado'}</span><span>nota ${a.grade} · ${a.ppm} PPM · ${a.errorRate}% error</span></div>`;
+  }).join('');
+
+  lessonDashboardContent.innerHTML = `
+    ${recordSection}
+    ${filterBar}
+    <div class="feedback-kpis">
+      <div class="feedback-kpi"><div class="kpi-val">${passedFlag ? 'Sí' : 'No'}</div><span class="kpi-lbl">¿Aprobada?</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${attempts}</div><span class="kpi-lbl">Intentos en el período</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${bestGrade}</div><span class="kpi-lbl">Mejor nota (período)</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${avgGrade}</div><span class="kpi-lbl">Nota promedio</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${bestPpm}</div><span class="kpi-lbl">Mejor PPM (período)</span></div>
+      <div class="feedback-kpi"><div class="kpi-val">${totalMinutes} min</div><span class="kpi-lbl">Tiempo invertido</span></div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>Velocidad de escritura (PPM) en esta lección</h3>
+      <p class="feedback-section-desc">Cada punto es uno de tus ${attempts} intentos en esta lección, en orden cronológico. Tendencia reciente: ${trendLabel}.</p>
+      <div class="feedback-subgrid">
+        <div class="feedback-chart-wrap">${svgLineChart(ppmPoints, {color:'var(--accent)', suffix:' ppm'})}</div>
+        <div class="feedback-substats">
+          <div class="feedback-stat-line"><span>PPM promedio</span><b>${avgPpm}</b></div>
+          <div class="feedback-stat-line"><span>Mejor PPM</span><b>${bestPpm}</b></div>
+          <div class="feedback-stat-line"><span>Intentos aprobados</span><b>${passedAttempts} de ${attempts}</b></div>
+          <div class="feedback-stat-line"><span>Nota mínima exigida</span><b>${required}</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>Precisión y errores en esta lección</h3>
+      <p class="feedback-section-desc">Precisión de cada intento y las teclas donde más te has equivocado dentro de esta lección en particular.</p>
+      <div class="feedback-subgrid">
+        <div class="feedback-chart-wrap">${svgLineChart(accPoints, {color:'var(--sage)', suffix:'%'})}</div>
+        <div class="feedback-substats">
+          <div class="feedback-stat-line"><span>Precisión promedio</span><b>${avgAcc}%</b></div>
+          <div class="feedback-stat-line"><span>Mejor precisión</span><b>${bestAcc}%</b></div>
+          <div class="feedback-stat-line"><span>Error promedio</span><b>${avgErr}%</b></div>
+          <div class="feedback-stat-line"><span>Mejor error logrado</span><b>${bestErr}%</b></div>
+        </div>
+      </div>
+      <p class="feedback-section-desc" style="margin-top:16px;">Teclas con más fallos en esta lección (${totalLetterErrors} errores registrados aquí):</p>
+      ${letterEntries.map(([ch, count])=>{
+        const pct = Math.round((count / maxLetterCount) * 100);
+        const share = totalLetterErrors ? ((count / totalLetterErrors) * 100).toFixed(1) : '0.0';
+        const label = ch === ' ' ? 'espacio' : ch;
+        return `<div class="feedback-bar-row"><span class="feedback-bar-label">${label}</span><div class="feedback-bar-track"><div class="feedback-bar-fill" style="width:${pct}%"></div></div><span class="feedback-bar-count">${count} · ${share}%</span></div>`;
+      }).join('') || '<p class="feedback-muted">Sin errores registrados en esta lección. ¡Bien ahí!</p>'}
+    </div>
+
+    <div class="feedback-section">
+      <h3>Porcentaje de error por letra en esta lección</h3>
+      <p class="feedback-section-desc">El error de cada tecla, calculado sobre cuántas veces esa letra aparece realmente en el texto de esta lección (× tus ${attempts} intentos). Mínimo 3 apariciones para contar.</p>
+      ${renderErrorRateBars(letterRateEntries, 15)}
+    </div>
+
+    <div class="feedback-section">
+      <h3>Historial de intentos</h3>
+      <p class="feedback-section-desc">Tus ${attempts} intentos en esta lección, del más reciente al más antiguo.</p>
+      ${attemptRows}
+    </div>
+  `;
+
+  lessonDashboardOverlay.classList.remove('hidden');
+}
+
+document.getElementById('lessonDashboardCloseBtn').onclick = ()=> lessonDashboardOverlay.classList.add('hidden');
+
+/* ---------------- Theme ---------------- */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.onclick = ()=>{
+  const isLight = document.body.classList.toggle('light');
+  themeToggle.textContent = isLight ? '🌙 Modo oscuro' : '☀️ Modo claro';
+};
+
+/* ---------------- Render sidebar ---------------- */
+const lessonList = document.getElementById('lessonList');
+function isLessonUnlocked(index){
+  return isAdmin || index === 0 || LESSONS.slice(0, index).every((_, previousIndex)=> completedLessons.has(previousIndex));
+}
+
+function renderSidebar(){
+  const progressSummary = document.getElementById('progressSummary');
+  progressSummary.textContent = `${completedLessons.size} de ${LESSONS.length} lecciones aprobadas · progreso guardado en este dispositivo`;
+  lessonList.innerHTML = "";
+  LESSONS.forEach((les, i)=>{
+    const li = document.createElement('li');
+    const unlocked = isLessonUnlocked(i);
+    li.className = 'lesson-item' + (i===current?' active':'') + (completedLessons.has(i)?' done':'') + (unlocked?'':' locked');
+    li.innerHTML = `<span class="lesson-num">${completedLessons.has(i)?'✓':unlocked?i+1:'🔒'}</span><span>${les.t.split('·')[0].split(':')[0].trim()}</span>`;
+    if(unlocked) li.onclick = ()=> loadLesson(i);
+    lessonList.appendChild(li);
+  });
+}
+
+/* ---------------- Render keyboard ---------------- */
+const kbRows = document.getElementById('kbRows');
+function renderKeyboard(){
+  kbRows.innerHTML = "";
+  KB_LAYOUT.forEach(row=>{
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'kb-row';
+    row.forEach(def=>{
+      const el = document.createElement('div');
+      el.className = 'key' + (def.cls ? ' ' + def.cls : '');
+      el.dataset.key = def.k;
+      el.textContent = def.label !== undefined ? def.label : def.k;
+      rowDiv.appendChild(el);
+    });
+    kbRows.appendChild(rowDiv);
+  });
+}
+
+function highlightKey(ch, isError){
+  document.querySelectorAll('.key').forEach(k=>{k.classList.remove('active','error');});
+  const fingerNote = document.getElementById('fingerNote');
+  if(ch===undefined){ fingerNote.classList.remove('error'); return; }
+  const lower = ch.toLowerCase();
+  const info = FINGER[lower];
+  if(!info) return;
+  const keyEl = document.querySelector(`.key[data-key="${lower==='ñ'?'ñ':lower}"]`);
+  if(keyEl){
+    keyEl.classList.add(isError ? 'error' : 'active');
+  }
+  const isUpper = ch !== lower && /[a-zñ]/.test(lower);
+  if(isUpper){
+    const shiftSide = info[0]==='l' ? 'shiftR' : 'shiftL';
+    const shiftEl = document.querySelector(`.key[data-key="${shiftSide}"]`);
+    if(shiftEl){ shiftEl.classList.add(isError?'error':'active'); }
+  }
+  if(isError){
+    fingerNote.classList.add('error');
+    fingerNote.innerHTML = `❌ Tecla incorrecta. Corrige con <b>${ch===' '?'espacio':ch}</b> (${FINGER_NAME[info]}) para poder continuar.`;
+  } else {
+    fingerNote.classList.remove('error');
+    fingerNote.innerHTML = `Siguiente tecla: <b>${ch===' '?'espacio':ch}</b> → usa el <b>${FINGER_NAME[info]}</b>${isUpper?' (+ Shift)':''}`;
+  }
+}
+
+/* ---------------- Typing engine ---------------- */
+const textDisplay = document.getElementById('textDisplay');
+const hiddenInput = document.getElementById('hiddenInput');
+const typeField = document.getElementById('typeField');
+const hintText = document.getElementById('hintText');
+const progressBar = document.getElementById('progressBar');
+const progressPct = document.getElementById('progressPct');
+const pauseBtn = document.getElementById('pauseBtn');
+const pauseOverlay = document.getElementById('pauseOverlay');
+
+function loadLesson(i){
+  if(!isLessonUnlocked(i)) return;
+  current = i;
+  typed = ""; errors = 0; startTime = null; finished = false; lockedError = false; errorRecordedAt = -1;
+  isPaused = false; pausedAt = null; pausedDuration = 0;
+  lastActiveLine = -1;
+  prepareExercise(LESSONS[i].x);
+  document.getElementById('lessonTitle').textContent = LESSONS[i].t;
+  document.getElementById('lessonDesc').textContent = LESSONS[i].d;
+  document.getElementById('resultBox').classList.remove('show');
+  hintText.classList.remove('error');
+  hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para aprobar: ${minGradeFor(i)}. El % de error influye en tu nota (más margen si escribes rápido). Esc para pausar.`;
+  document.getElementById('nextBtn').disabled = true;
+  pauseBtn.disabled = true;
+  pauseBtn.textContent = 'Ⅱ Pausar';
+  typeField.classList.remove('paused');
+  pauseOverlay.classList.remove('show');
+  updateStats();
+  renderText();
+  typeField.scrollTop = 0;
+  requestAnimationFrame(()=>{ typeField.scrollTop = 0; });
+  renderSidebar();
+  hiddenInput.value = "";
+  typeField.focus({preventScroll:true});
+  hiddenInput.focus({preventScroll:true});
+}
+
+function renderText(){
+  const target = exerciseTarget;
+  let html = "";
+  const activeLine = activeLineIndex(typed.length);
+  for(let row = 0; row < exerciseLines.length; row++){
+    const isDone = typed.length >= lineEnds[row];
+    const isActive = !finished && row === activeLine;
+    html += `<div class="typing-line ${isDone ? 'done' : isActive ? 'active' : 'pending'}"><span class="line-num">${row + 1}</span>`;
+    for(let i = lineStarts[row]; i < lineEnds[row]; i++){
+      let cls = "ch";
+      if(i < typed.length){
+        cls += " correct";
+      } else if(i === typed.length){
+        cls += lockedError ? " blocked" : " current";
+      }
+      const c = target[i] === ' ' ? '&nbsp;' : target[i];
+      html += `<span class="${cls}">${c}</span>`;
+    }
+    html += '</div>';
+  }
+  textDisplay.innerHTML = html;
+  highlightKey(target[typed.length], lockedError);
+  const pct = Math.round((typed.length/target.length)*100);
+  progressBar.style.width = pct + '%';
+  progressPct.textContent = pct + '%';
+  if(activeLine !== lastActiveLine){
+    const activeElement = textDisplay.children[activeLine];
+    if(activeElement){
+      typeField.scrollTo({
+        top:Math.max(0, activeElement.offsetTop - typeField.clientHeight / 2 + activeElement.clientHeight / 2),
+        behavior:lastActiveLine < 0 ? 'auto' : 'smooth'
+      });
+    }
+    lastActiveLine = activeLine;
+  }
+}
+
+function getMetrics(){
+  const characters = typed.length;
+  const words = typed.trim() ? typed.trim().split(/\s+/).length : 0;
+  const totalKeys = characters + errors;
+  const accuracy = totalKeys ? (characters / totalKeys) * 100 : 100;
+  const errorRate = totalKeys ? (errors / totalKeys) * 100 : 0;
+  const now = isPaused && pausedAt ? pausedAt : Date.now();
+  const elapsed = startTime ? Math.max(0, now - startTime - pausedDuration) : 0;
+  const ppm = elapsed > 0 ? Math.round((characters / 5) / (elapsed / 60000)) : 0;
+  // Tolerancia de error según velocidad: 40+ PPM permite hasta 4% de error para llegar a 90;
+  // por debajo de 40 PPM se exige más precisión.
+  const maxErrorRate = ppm >= 40 ? 4 : ppm >= 25 ? 2.5 : 1.5;
+  // Nota estricta y no lineal:
+  // - menos de 1% de error -> tramo superior, hasta 100 en 0%.
+  // - entre 1% y el límite según tu PPM -> baja de 95 a 90.
+  // - por encima del límite -> castigo fuerte.
+  let accuracyScore;
+  if(errorRate <= 1){
+    accuracyScore = 100 - (errorRate / 1) * 5;
+  } else if(errorRate <= maxErrorRate){
+    const span = Math.max(0.01, maxErrorRate - 1);
+    accuracyScore = 95 - ((errorRate - 1) / span) * 5;
+  } else {
+    accuracyScore = 90 - (errorRate - maxErrorRate) * 8;
+  }
+  const speedBonus = Math.max(0, Math.min(3, (ppm - 25) / 15));
+  const grade = characters ? Math.round(Math.max(0, Math.min(100, accuracyScore + speedBonus))) : 0;
+  return {characters, words, accuracy, errorRate, ppm, grade, maxErrorRate, elapsed};
+}
+
+function updateStats(){
+  const metrics = getMetrics();
+  document.getElementById('statErr').textContent = errors;
+  document.getElementById('statErrorRate').textContent = `${metrics.errorRate.toFixed(1)}%`;
+  document.getElementById('statChars').textContent = metrics.characters;
+  document.getElementById('statWords').textContent = metrics.words;
+  document.getElementById('statPPM').textContent = metrics.ppm;
+  document.getElementById('statAcc').textContent = metrics.characters ? `${metrics.grade}%` : '—';
+  const totalSeconds = Math.floor(metrics.elapsed / 1000);
+  const mm = Math.floor(totalSeconds / 60);
+  const ss = String(totalSeconds % 60).padStart(2, '0');
+  document.getElementById('statTime').textContent = `${mm}:${ss}`;
+}
+
+function togglePause(){
+  if(!startTime || finished) return;
+  if(isPaused){
+    pausedDuration += Date.now() - pausedAt;
+    pausedAt = null;
+    isPaused = false;
+    awaitingResume = true;
+    resumeGapStart = Date.now();
+    pauseBtn.textContent = 'Ⅱ Pausar';
+    typeField.classList.remove('paused');
+    pauseOverlay.classList.remove('show');
+    hintText.classList.remove('error');
+    hintText.textContent = 'Práctica reanudada. El tiempo se reanuda al presionar una tecla. (Esc para pausar)';
+    hiddenInput.focus({preventScroll:true});
+  } else {
+    pausedAt = Date.now();
+    isPaused = true;
+    awaitingResume = false;
+    resumeGapStart = null;
+    pauseBtn.textContent = '▶ Reanudar';
+    typeField.classList.add('paused');
+    pauseOverlay.classList.add('show');
+    hintText.classList.remove('error');
+    hintText.textContent = 'Práctica en pausa. El tiempo no se está contando. (Esc para reanudar)';
+    hiddenInput.blur();
+  }
+  updateStats();
+}
+
+pauseBtn.onclick = togglePause;
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Escape') return;
+  if(!authOverlay.classList.contains('hidden')) return;
+  if(pauseBtn.disabled) return;
+  e.preventDefault();
+  togglePause();
+});
+
+hiddenInput.addEventListener('keydown', (e)=>{
+  if(finished) return;
+  if(isPaused){ e.preventDefault(); return; }
+  if(awaitingResume){
+    pausedDuration += Date.now() - resumeGapStart;
+    awaitingResume = false;
+    resumeGapStart = null;
+  }
+  const target = exerciseTarget;
+
+  if(e.key === 'Backspace'){
+    e.preventDefault();
+    if(lockedError){
+      lockedError = false;
+      renderText();
+    }
+    // Ya no se permite borrar texto correcto ya escrito: Backspace solo libera
+    // el bloqueo de un error, no retrocede sobre lo ya confirmado.
+    return;
+  }
+  if(e.key.length !== 1) return; // ignore control keys
+  e.preventDefault();
+
+  if(!startTime){
+    startTime = Date.now();
+    pauseBtn.disabled = false;
+  }
+
+  const idx = typed.length;
+  if(e.key !== target[idx]){
+    if(errorRecordedAt !== idx){
+      errors++;
+      errorRecordedAt = idx;
+      const expected = target[idx];
+      if(expected !== undefined){
+        const key = expected === ' ' ? ' ' : expected.toLowerCase();
+        letterErrors[key] = (letterErrors[key] || 0) + 1;
+        if(!letterErrorsByLesson[current]) letterErrorsByLesson[current] = {};
+        letterErrorsByLesson[current][key] = (letterErrorsByLesson[current][key] || 0) + 1;
+      }
+    }
+    lockedError = true;
+    typeField.classList.add('shake');
+    setTimeout(()=> typeField.classList.remove('shake'), 280);
+    renderText();
+    updateStats();
+    return; // bloqueado: no avanza hasta que se corrija
+  }
+
+  lockedError = false;
+  errorRecordedAt = -1;
+  typed += e.key;
+  renderText();
+  updateStats();
+
+  if(typed.length === target.length){
+    finishLesson();
+  }
+});
+
+typeField.addEventListener('click', ()=>{ hiddenInput.focus({preventScroll:true}); typeField.classList.add('focused'); });
+hiddenInput.addEventListener('focus', ()=> typeField.classList.add('focused'));
+hiddenInput.addEventListener('blur', ()=> typeField.classList.remove('focused'));
+
+function finishLesson(){
+  finished = true;
+  isPaused = false;
+  typeField.classList.remove('paused');
+  pauseOverlay.classList.remove('show');
+  pauseBtn.disabled = true;
+  pauseBtn.textContent = 'Ⅱ Pausar';
+  const metrics = getMetrics();
+  const requiredGrade = minGradeFor(current);
+  const passed = metrics.grade >= requiredGrade;
+  if(passed) completedLessons.add(current);
+  renderSidebar();
+  const attemptRecord = {
+    passed,
+    ppm:metrics.ppm,
+    grade:metrics.grade,
+    accuracy:Number(metrics.accuracy.toFixed(1)),
+    errors,
+    errorRate:Number(metrics.errorRate.toFixed(1)),
+    maxErrorRate:metrics.maxErrorRate,
+    elapsedMs:metrics.elapsed,
+    date:new Date().toISOString()
+  };
+  lessonResults[current] = attemptRecord;
+  if(!attemptsHistory[current]) attemptsHistory[current] = [];
+  attemptsHistory[current].push(attemptRecord);
+  if(attemptsHistory[current].length > 20) attemptsHistory[current].shift();
+  ppmHistory.push({date:attemptRecord.date, lesson:current, ppm:metrics.ppm, grade:metrics.grade, passed});
+  if(ppmHistory.length > 60) ppmHistory.shift();
+  saveProgress();
+  const resultMsg = document.getElementById('resultMsg');
+  const nextBtn = document.getElementById('nextBtn');
+  if(passed){
+    resultMsg.innerHTML =
+      `Lección aprobada — <b>${metrics.ppm} PPM</b>, nota <b>${metrics.grade}</b> (mínimo exigido: ${requiredGrade}), error <b>${metrics.errorRate.toFixed(1)}%</b>.`;
+    hintText.classList.remove('error');
+    hintText.textContent = 'Aprobada. La siguiente lección ya está desbloqueada y tu progreso fue guardado.';
+    nextBtn.disabled = current === LESSONS.length - 1;
+  } else {
+    resultMsg.innerHTML =
+      `Lección no aprobada — <b>${metrics.ppm} PPM</b>, nota <b>${metrics.grade}</b>, error <b>${metrics.errorRate.toFixed(1)}%</b>. Necesitas nota ${requiredGrade} o más para aprobar.`;
+    hintText.classList.add('error');
+    hintText.textContent = 'Calificación estricta: repite la lección para aprobarla.';
+    nextBtn.disabled = true;
+  }
+  document.getElementById('resultBox').classList.add('show');
+  highlightKey(undefined, false);
+}
+
+document.getElementById('retryBtn').onclick = ()=> loadLesson(current);
+document.getElementById('resetBtn').onclick = ()=> loadLesson(current);
+document.getElementById('nextBtn').onclick = ()=>{
+  if(!document.getElementById('nextBtn').disabled && current < LESSONS.length - 1) loadLesson(current+1);
+};
+
+/* ---------------- Init ---------------- */
+emailInput.focus();
+
+// Reloj en vivo: mientras la lección está corriendo (no pausada, no terminada),
+// el tiempo (y el PPM, que depende de él) se actualiza cada segundo, aunque no
+// se esté pulsando ninguna tecla en ese instante.
+setInterval(()=>{
+  if(startTime && !isPaused && !finished){
+    updateStats();
+  }
+}, 1000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabaseUrl = "https://mcxxfjtcbnzbxgxqnbcy.supabase.co";
+const supabaseKey = "sb_publishable_mCyDkBeQsDC1NkC9XwX7tA_6_lG4J0m";
+
+const supabaseClient = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+console.log("Supabase conectado:", supabase);
+</script>
+</body>
+</html>
