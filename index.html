@@ -1065,13 +1065,12 @@ async function saveProgress(){
   };
 
   const { error } = await supabaseClient
-    .from("progress")
-    .upsert({
-      user_id:user.id,
-      data:progressData,
-      updated_at:new Date().toISOString()
-    });
-
+  .from("progress")
+  .update({
+    data: progressData,
+    updated_at: new Date().toISOString()
+  })
+  .eq("user_id", user.id);
   if(error){
     console.error("Error guardando progreso:", error);
   }
