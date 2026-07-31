@@ -761,10 +761,6 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
     <span class="user-chip" id="userChip" hidden></span>
     <button class="theme-toggle" id="themeToggle">🌙 Modo oscuro</button>
     <button class="logout-btn" id="feedbackBtn" hidden>📊 Mi progreso</button>
-    <button class="logout-btn" id="exportBtn" hidden>⬇ Exportar progreso</button>
-    <button class="logout-btn" id="importBtn">⬆ Importar progreso</button>
-    <input type="file" id="importFile" accept="application/json" hidden>
-    <button class="logout-btn" id="adminBtn" hidden>🛡 Ver errores</button>
     <button class="logout-btn" id="logoutBtn" hidden>Salir</button>
   </div>
 </div>
@@ -836,7 +832,7 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
   <form class="auth-card" id="loginForm">
     <div class="auth-icon">⌨</div>
     <h2>Bienvenido a Tecleo</h2>
-    <p>Inicia sesión o crea un acceso local para guardar tu progreso en este dispositivo.</p>
+    <p>Inicia sesión con tu correo y contraseña. Tu progreso se guarda en la nube (Supabase) y te sigue en cualquier navegador o dispositivo.</p>
     <label>Correo electrónico<input id="emailInput" type="email" autocomplete="email" maxlength="35" required></label>
     <label>Contraseña<input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required></label>
     <p class="auth-message" id="authMessage">Inicia sesión con tu correo electrónico</p>
@@ -868,21 +864,21 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
   </div>
 </div>
 
-<div class="auth-overlay hidden" id="adminOverlay">
-  <div class="auth-card" style="position:relative;width:min(100%,640px);max-height:82vh;padding:0;overflow:hidden;">
-    <div class="auth-card-scroll" style="max-height:82vh;overflow-y:auto;padding:30px;">
-      <div class="auth-icon">🛡</div>
-      <h2>Panel de administrador</h2>
-      <p>Progreso y errores guardados por usuario en este dispositivo.</p>
-      <div id="adminContent"></div>
-      <button class="primary auth-submit" id="adminCloseBtn" type="button">Cerrar</button>
-    </div>
-  </div>
-</div>
-
 <div id="chartTooltip" class="chart-tooltip"></div>
 
 <footer>Tecleo — proyecto propio de práctica de mecanografía, sin relación con ningún otro programa comercial.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabaseUrl = "https://mcxxfjtcbnzbxgxqnbcy.supabase.co";
+const supabaseKey = "sb_publishable_mCyDkBeQsDC1NkC9XwX7tA_6_lG4J0m";
+
+const supabaseClient = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+console.log("Supabase conectado:", supabaseClient);
+</script>
 
 <script>
 /* ---------------- Lesson content (original) ---------------- */
@@ -1006,32 +1002,38 @@ let pausedAt = null;
 let pausedDuration = 0;
 let awaitingResume = false;
 let resumeGapStart = null;
-let isAdmin = false;
-const ACCOUNTS_KEY = 'tecleo-accounts-v2';
-const PROGRESS_PREFIX = 'tecleo-progress-v3:';
-let activeUser = null;
+let activeUser = null;   // correo, solo para mostrar en pantalla
+let activeUserId = null; // uuid real de Supabase Auth: esto es lo único válido para consultar/guardar en la tabla
 
-function progressKey(user){
-  return `${PROGRESS_PREFIX}${encodeURIComponent(user)}`;
-}
+// Trae el progreso guardado del usuario autenticado. Usa maybeSingle() (no single())
+// porque un usuario nuevo todavía no tiene fila en "progress", y eso NO es un error:
+// single() lo trataría como error y single()+error siempre te devolvía el progreso vacío,
+// que es exactamente el bug que hacía "perder" el progreso en cada inicio de sesión.
+async function loadSavedProgress(userId){
+  const empty = {
+    completedLessons: [],
+    lessonResults: {},
+    letterErrors: {},
+    letterErrorsByLesson: {},
+    attemptsHistory: {},
+    ppmHistory: []
+  };
 
-async function loadSavedProgress(user){
+  if(!userId) return empty;
 
   const { data, error } = await supabaseClient
     .from("progress")
     .select("data")
-    .eq("user_id", user.id)
-    .single();
+    .eq("user_id", userId)
+    .maybeSingle();
 
-  if(error || !data){
-    return {
-      completedLessons: [],
-      lessonResults: {},
-      letterErrors: {},
-      letterErrorsByLesson: {},
-      attemptsHistory: {},
-      ppmHistory: []
-    };
+  if(error){
+    console.error("Error cargando progreso desde Supabase:", error);
+    return empty;
+  }
+  if(!data){
+    // Usuario nuevo: todavía no existe fila para él. Es normal, no es un error.
+    return empty;
   }
 
   const saved = data.data || {};
@@ -1071,35 +1073,35 @@ let currentDashboardLessonIndex = null;
 let attemptsHistory = {};
 let ppmHistory = [];
 
+// Guarda el progreso del usuario actualmente autenticado en Supabase.
+// upsert() en vez de update(): update() solo modifica una fila que YA existe,
+// así que en el primer guardado de un usuario nuevo no hacía nada (0 filas
+// afectadas) y el progreso jamás llegaba a crearse en la base de datos.
 async function saveProgress(){
-
-  console.log("1");
-
-  const { data:{ user } } = await supabaseClient.auth.getUser();
-
-  console.log("2", user);
+  if(!activeUserId){
+    console.warn("saveProgress: no hay usuario autenticado, no se guarda nada.");
+    return;
+  }
 
   const progressData = {
-    ...
+    completedLessons: [...completedLessons].sort((a,b)=> a - b),
+    lessonResults,
+    letterErrors,
+    letterErrorsByLesson,
+    attemptsHistory,
+    ppmHistory
   };
 
-  console.log("3");
-
-  const { data, error } = await supabaseClient
+  const { error } = await supabaseClient
     .from("progress")
-    .update({
+    .upsert({
+      user_id: activeUserId,
       data: progressData,
       updated_at: new Date().toISOString()
-    })
-    .eq("user_id", user.id)
-    .select();
-
-  console.log("4");
-  console.log(data);
-  console.log(error);
+    }, { onConflict: "user_id" });
 
   if(error){
-    console.error("Error guardando progreso:", error);
+    console.error("Error guardando progreso en Supabase:", error);
   }
 }
 const LINE_WIDTH = 42;
@@ -1160,131 +1162,41 @@ const passwordInput = document.getElementById('passwordInput');
 const authMessage = document.getElementById('authMessage');
 const userChip = document.getElementById('userChip');
 const logoutBtn = document.getElementById('logoutBtn');
-const adminBtn = document.getElementById('adminBtn');
-const adminOverlay = document.getElementById('adminOverlay');
-const adminContent = document.getElementById('adminContent');
 const lessonDashboardOverlay = document.getElementById('lessonDashboardOverlay');
 const lessonDashboardContent = document.getElementById('lessonDashboardContent');
 const lessonDashboardTitle = document.getElementById('lessonDashboardTitle');
 const feedbackBtn = document.getElementById('feedbackBtn');
 const feedbackOverlay = document.getElementById('feedbackOverlay');
 const feedbackContent = document.getElementById('feedbackContent');
-const exportBtn = document.getElementById('exportBtn');
-const importBtn = document.getElementById('importBtn');
-const importFile = document.getElementById('importFile');
-
-exportBtn.onclick = ()=>{
-  if(!activeUser) return;
-  const accounts = readAccounts();
-  const account = accounts[activeUser.toLocaleLowerCase()];
-  const payload = {
-    tecleoExport: true,
-    version: 1,
-    username: activeUser,
-    pin: account ? account.pin : null,
-    completedLessons: [...completedLessons].sort((a,b)=> a-b),
-    lessonResults,
-    letterErrors,
-    letterErrorsByLesson,
-    attemptsHistory,
-    ppmHistory,
-    exportedAt: new Date().toISOString()
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `tecleo-progreso-${activeUser.toLocaleLowerCase()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-};
-
-importBtn.onclick = ()=> importFile.click();
-
-importFile.addEventListener('change', ()=>{
-  const file = importFile.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    let data;
-    try{
-      data = JSON.parse(reader.result);
-    } catch(error){
-      alert('Ese archivo no es un progreso válido de Tecleo (JSON inválido).');
-      importFile.value = '';
-      return;
-    }
-    if(!data || !data.tecleoExport || !data.username){
-      alert('Ese archivo no es un progreso válido de Tecleo.');
-      importFile.value = '';
-      return;
-    }
-    const accountId = data.username.toLocaleLowerCase();
-    const accounts = readAccounts();
-    accounts[accountId] = {name: data.username, pin: data.pin || accounts[accountId]?.pin || '0000'};
-    try{ localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts)); } catch(error){}
-    try{
-      localStorage.setItem(progressKey(data.username), JSON.stringify({
-        completedLessons: data.completedLessons || [],
-        lessonResults: data.lessonResults || {},
-        letterErrors: data.letterErrors || {},
-        letterErrorsByLesson: data.letterErrorsByLesson || {},
-        attemptsHistory: data.attemptsHistory || {},
-        ppmHistory: data.ppmHistory || [],
-        updatedAt: new Date().toISOString()
-      }));
-    } catch(error){
-      alert('No se pudo guardar el progreso importado en este navegador.');
-      importFile.value = '';
-      return;
-    }
-    importFile.value = '';
-    authOverlay.classList.add('hidden');
-    startSession(data.username, accountId === 'admin');
-    alert(`Progreso de "${data.username}" importado y cargado correctamente.`);
-  };
-  reader.readAsText(file);
-});
 
 // Cerrar estos paneles también al hacer clic en el fondo (fuera de la tarjeta).
 // El de inicio de sesión (authOverlay) queda excluido a propósito: ese sigue siendo obligatorio.
-[adminOverlay, lessonDashboardOverlay, feedbackOverlay].forEach(overlay=>{
+[lessonDashboardOverlay, feedbackOverlay].forEach(overlay=>{
   overlay.addEventListener('click', (e)=>{
     if(e.target === overlay) overlay.classList.add('hidden');
   });
 });
 
-function readAccounts(){
-  try{
-    const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY));
-    return accounts && typeof accounts === 'object' ? accounts : {};
-  } catch(error){
-    return {};
-  }
-}
-
-async function startSession(user, adminFlag){
-    activeUser = user;
-  isAdmin = !!adminFlag;
-  const saved = await loadSavedProgress(user);
+// email = solo para mostrar en pantalla; userId = el uuid real de Supabase Auth,
+// que es lo que de verdad identifica la fila de progreso en la base de datos.
+async function startSession(email, userId){
+  activeUser = email;
+  activeUserId = userId;
+  const saved = await loadSavedProgress(userId);
   completedLessons = new Set(saved.completedLessons);
   lessonResults = saved.lessonResults;
   letterErrors = saved.letterErrors;
   letterErrorsByLesson = saved.letterErrorsByLesson;
   attemptsHistory = saved.attemptsHistory;
   ppmHistory = saved.ppmHistory;
-  userChip.textContent = isAdmin ? `${user} · administrador` : user;
+  userChip.textContent = email;
   userChip.hidden = false;
   logoutBtn.hidden = false;
   feedbackBtn.hidden = false;
-  exportBtn.hidden = false;
-  adminBtn.hidden = !isAdmin;
   authOverlay.classList.add('hidden');
   renderKeyboard();
   const firstPendingLesson = LESSONS.findIndex((_, index)=> !completedLessons.has(index));
-  loadLesson(isAdmin ? 0 : (firstPendingLesson === -1 ? LESSONS.length - 1 : firstPendingLesson));
+  loadLesson(firstPendingLesson === -1 ? LESSONS.length - 1 : firstPendingLesson);
 }
 
 loginForm.addEventListener("submit", async (event) => {
@@ -1340,11 +1252,13 @@ loginForm.addEventListener("submit", async (event) => {
     }
 
     // Inicio de sesión exitoso
-    await startSession(data.user.email, false);
+    await startSession(data.user.email, data.user.id);
 });
-logoutBtn.onclick = ()=>{
+
+logoutBtn.onclick = async ()=>{
+  await supabaseClient.auth.signOut();
   activeUser = null;
-  isAdmin = false;
+  activeUserId = null;
   completedLessons = new Set();
   lessonResults = {};
   letterErrors = {};
@@ -1354,58 +1268,13 @@ logoutBtn.onclick = ()=>{
   userChip.hidden = true;
   logoutBtn.hidden = true;
   feedbackBtn.hidden = true;
-  exportBtn.hidden = true;
-  adminBtn.hidden = true;
   feedbackOverlay.classList.add('hidden');
-  adminOverlay.classList.add('hidden');
   authOverlay.classList.remove('hidden');
   loginForm.reset();
   authMessage.classList.remove('error');
-  authMessage.textContent = 'Inicia sesión para continuar o crea un acceso local nuevo.';
+  authMessage.textContent = 'Inicia sesión con tu correo electrónico';
   emailInput.focus();
 };
-
-adminBtn.onclick = ()=>{
-  renderAdminPanel();
-  adminOverlay.classList.remove('hidden');
-};
-document.getElementById('adminCloseBtn').onclick = ()=> adminOverlay.classList.add('hidden');
-
-function renderAdminPanel(){
-  const rows = [];
-  for(let i=0; i<localStorage.length; i++){
-    const key = localStorage.key(i);
-    if(!key || !key.startsWith(PROGRESS_PREFIX)) continue;
-    const username = decodeURIComponent(key.slice(PROGRESS_PREFIX.length));
-    let data;
-    try{ data = JSON.parse(localStorage.getItem(key)); } catch(error){ continue; }
-    const results = data?.lessonResults || {};
-    const entries = Object.keys(results);
-    const totalErrors = entries.reduce((sum,k)=> sum + (results[k].errors||0), 0);
-    const avgGrade = entries.length ? Math.round(entries.reduce((s,k)=> s+(results[k].grade||0),0)/entries.length) : 0;
-    rows.push({username, completed:(data?.completedLessons||[]).length, totalErrors, avgGrade, results});
-  }
-  if(!rows.length){
-    adminContent.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Todavía no hay progreso guardado de ningún usuario en este dispositivo.</p>';
-    return;
-  }
-  adminContent.innerHTML = rows.map(r=>{
-    const detailRows = Object.keys(r.results).sort((a,b)=>Number(a)-Number(b)).map(k=>{
-      const res = r.results[k];
-      const title = LESSONS[Number(k)] ? LESSONS[Number(k)].t : `Lección ${Number(k)+1}`;
-      return `<tr><td style="padding:4px 6px;">${Number(k)+1}. ${title}</td><td style="padding:4px 6px;">${res.grade}</td><td style="padding:4px 6px;">${res.ppm}</td><td style="padding:4px 6px;">${res.errorRate}%</td><td style="padding:4px 6px;">${res.passed ? '✓' : '✗'}</td></tr>`;
-    }).join('');
-    return `
-      <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);">
-        <p style="font-weight:700;margin:0 0 4px;">${r.username}</p>
-        <p style="color:var(--muted);font-size:0.8rem;margin:0 0 8px;">${r.completed} lecciones aprobadas · ${r.totalErrors} errores totales · nota promedio ${r.avgGrade}</p>
-        <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
-          <thead><tr style="text-align:left;color:var(--muted);"><th style="padding:4px 6px;">Lección</th><th style="padding:4px 6px;">Nota</th><th style="padding:4px 6px;">PPM</th><th style="padding:4px 6px;">Error</th><th style="padding:4px 6px;">Aprobada</th></tr></thead>
-          <tbody>${detailRows || '<tr><td colspan="5" style="padding:4px 6px;color:var(--muted);">Sin intentos aún.</td></tr>'}</tbody>
-        </table>
-      </div>`;
-  }).join('');
-}
 
 feedbackBtn.onclick = ()=>{
   dashboardFilter = 'all';
@@ -1943,7 +1812,7 @@ themeToggle.onclick = ()=>{
 /* ---------------- Render sidebar ---------------- */
 const lessonList = document.getElementById('lessonList');
 function isLessonUnlocked(index){
-  return isAdmin || index === 0 || LESSONS.slice(0, index).every((_, previousIndex)=> completedLessons.has(previousIndex));
+  return index === 0 || LESSONS.slice(0, index).every((_, previousIndex)=> completedLessons.has(previousIndex));
 }
 
 function renderSidebar(){
@@ -2283,6 +2152,15 @@ document.getElementById('nextBtn').onclick = ()=>{
 /* ---------------- Init ---------------- */
 emailInput.focus();
 
+// Si ya hay una sesión válida de Supabase (por ejemplo, recargaste la página),
+// entra directo sin pedir login de nuevo, y carga su progreso real.
+supabaseClient.auth.getSession().then(({ data }) => {
+  const session = data && data.session;
+  if(session && session.user){
+    startSession(session.user.email, session.user.id);
+  }
+});
+
 // Reloj en vivo: mientras la lección está corriendo (no pausada, no terminada),
 // el tiempo (y el PPM, que depende de él) se actualiza cada segundo, aunque no
 // se esté pulsando ninguna tecla en ese instante.
@@ -2291,17 +2169,6 @@ setInterval(()=>{
     updateStats();
   }
 }, 1000);
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const supabaseUrl = "https://mcxxfjtcbnzbxgxqnbcy.supabase.co";
-const supabaseKey = "sb_publishable_mCyDkBeQsDC1NkC9XwX7tA_6_lG4J0m";
-
-const supabaseClient = window.supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-);
-console.log("Supabase conectado:", supabase);
 </script>
 </body>
 </html>
