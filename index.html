@@ -1050,8 +1050,9 @@ let ppmHistory = [];
 
 async function saveProgress(){
 
+  console.log("saveProgress() ejecutado");
   const { data: { user } } = await supabaseClient.auth.getUser();
-
+  console.log("Usuario:", user);
   if(!user) return;
 
   const progressData = {
@@ -1064,13 +1065,19 @@ async function saveProgress(){
     updatedAt:new Date().toISOString()
   };
 
-  const { error } = await supabaseClient
+const { data, error } = await supabaseClient
   .from("progress")
   .update({
     data: progressData,
     updated_at: new Date().toISOString()
   })
-  .eq("user_id", user.id);
+  .eq("user_id", user.id)
+  .select();
+
+console.log("Usuario:", user.id);
+console.log("Resultado:", data);
+console.log("Error:", error);
+
   if(error){
     console.error("Error guardando progreso:", error);
   }
