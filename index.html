@@ -1015,27 +1015,50 @@ function progressKey(user){
   return `${PROGRESS_PREFIX}${encodeURIComponent(user)}`;
 }
 
-function loadSavedProgress(user){
-  try{
-    const saved = JSON.parse(localStorage.getItem(progressKey(user)));
-    const savedLessons = Array.isArray(saved?.completedLessons)
-      ? saved.completedLessons.filter(index => Number.isInteger(index) && index >= 0 && index < LESSONS.length)
-      : [];
-    const lessons = [];
-    for(let index = 0; index < LESSONS.length && savedLessons.includes(index); index++){
-      lessons.push(index);
-    }
+async function loadSavedProgress(user){
+
+  const { data, error } = await supabaseClient
+    .from("progress")
+    .select("data")
+    .eq("user_id", user.id)
+    .single();
+
+  if(error || !data){
     return {
-      completedLessons:lessons,
-      lessonResults:saved?.lessonResults || {},
-      letterErrors:saved?.letterErrors && typeof saved.letterErrors === 'object' ? saved.letterErrors : {},
-      letterErrorsByLesson:saved?.letterErrorsByLesson && typeof saved.letterErrorsByLesson === 'object' ? saved.letterErrorsByLesson : {},
-      attemptsHistory:saved?.attemptsHistory && typeof saved.attemptsHistory === 'object' ? saved.attemptsHistory : {},
-      ppmHistory:Array.isArray(saved?.ppmHistory) ? saved.ppmHistory : []
+      completedLessons: [],
+      lessonResults: {},
+      letterErrors: {},
+      letterErrorsByLesson: {},
+      attemptsHistory: {},
+      ppmHistory: []
     };
-  } catch(error){
-    return {completedLessons:[], lessonResults:{}, letterErrors:{}, letterErrorsByLesson:{}, attemptsHistory:{}, ppmHistory:[]};
   }
+
+  const saved = data.data || {};
+
+  const savedLessons = Array.isArray(saved.completedLessons)
+    ? saved.completedLessons.filter(i =>
+        Number.isInteger(i) &&
+        i >= 0 &&
+        i < LESSONS.length
+      )
+    : [];
+
+  const lessons = [];
+  for(let i = 0; i < LESSONS.length && savedLessons.includes(i); i++){
+    lessons.push(i);
+  }
+
+  return {
+    completedLessons: lessons,
+    lessonResults: saved.lessonResults || {},
+    letterErrors: saved.letterErrors || {},
+    letterErrorsByLesson: saved.letterErrorsByLesson || {},
+    attemptsHistory: saved.attemptsHistory || {},
+    ppmHistory: Array.isArray(saved.ppmHistory)
+      ? saved.ppmHistory
+      : []
+  };
 }
 
 let completedLessons = new Set();
@@ -1050,33 +1073,30 @@ let ppmHistory = [];
 
 async function saveProgress(){
 
-  console.log("saveProgress() ejecutado");
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  console.log("Usuario:", user);
-  if(!user) return;
+  console.log("1");
+
+  const { data:{ user } } = await supabaseClient.auth.getUser();
+
+  console.log("2", user);
 
   const progressData = {
-    completedLessons:[...completedLessons].sort((a,b)=>a-b),
-    lessonResults,
-    letterErrors,
-    letterErrorsByLesson,
-    attemptsHistory,
-    ppmHistory,
-    updatedAt:new Date().toISOString()
+    ...
   };
 
-const { data, error } = await supabaseClient
-  .from("progress")
-  .update({
-    data: progressData,
-    updated_at: new Date().toISOString()
-  })
-  .eq("user_id", user.id)
-  .select();
+  console.log("3");
 
-console.log("Usuario:", user.id);
-console.log("Resultado:", data);
-console.log("Error:", error);
+  const { data, error } = await supabaseClient
+    .from("progress")
+    .update({
+      data: progressData,
+      updated_at: new Date().toISOString()
+    })
+    .eq("user_id", user.id)
+    .select();
+
+  console.log("4");
+  console.log(data);
+  console.log(error);
 
   if(error){
     console.error("Error guardando progreso:", error);
