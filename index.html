@@ -750,7 +750,7 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
 }
 </style>
 </head>
-<body class="light">
+ <body class="light">
 
 <div class="brand">
   <div class="brand-left">
@@ -1894,7 +1894,7 @@ function loadLesson(i){
   document.getElementById('lessonDesc').textContent = LESSONS[i].d;
   document.getElementById('resultBox').classList.remove('show');
   hintText.classList.remove('error');
-  hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para aprobar: ${minGradeFor(i)}. El % de error influye en tu nota (más margen si escribes rápido). Esc para pausar.`;
+  hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para aprobar: ${minGradeFor(i)}. El % de error influye en tu nota. Esc para pausar.`;
   document.getElementById('nextBtn').disabled = true;
   pauseBtn.disabled = true;
   pauseBtn.textContent = 'Ⅱ Pausar';
