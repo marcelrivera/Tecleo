@@ -481,6 +481,16 @@ body{
 .sidebar h2{font-size:0.7rem;letter-spacing:0.09em;padding:19px 18px 7px;border:0;}
 .progress-summary{margin:0;padding:0 18px 13px;color:var(--muted);font-size:0.77rem;border-bottom:1px solid var(--border);}
 .lesson-list{padding:9px;max-height:68vh;}
+.doc-upload{padding:0 9px;margin-bottom:6px;}
+.doc-upload-msg{font-size:0.72rem;color:var(--muted);margin:6px 2px 0;min-height:1.2em;}
+.doc-upload-msg.error{color:var(--brick, #e05d5d);}
+.doc-list-empty{padding:8px 11px;font-size:0.78rem;color:var(--muted);}
+.doc-item-actions{display:flex;gap:6px;margin-left:auto;}
+.doc-delete-btn{
+  border:none;background:transparent;color:var(--muted);cursor:pointer;
+  font-size:0.85rem;line-height:1;padding:2px 6px;border-radius:6px;
+}
+.doc-delete-btn:hover{color:var(--brick, #e05d5d);background:rgba(224,93,93,0.1);}
 .lesson-item{gap:11px;padding:10px;border-radius:11px;font-size:0.86rem;transition:background .18s ease,color .18s ease,transform .18s ease;}
 .lesson-item:hover{background:rgba(148,163,184,0.12);transform:translateX(2px);}
 .lesson-item.active{background:color-mix(in srgb,var(--accent) 13%,transparent);box-shadow:none;color:var(--paper);}
@@ -770,6 +780,15 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
     <h2>Lecciones</h2>
     <p class="progress-summary" id="progressSummary" aria-live="polite"></p>
     <ul class="lesson-list" id="lessonList"></ul>
+
+    <h2 style="margin-top:18px;">Documentos de práctica</h2>
+    <p class="progress-summary">Sube un texto propio (.txt) y practica con él, con la misma calificación.</p>
+    <div class="doc-upload">
+      <input type="file" id="docFileInput" accept=".txt,text/plain" hidden>
+      <button type="button" class="reset-btn" id="docUploadBtn" style="width:100%;">＋ Subir documento (.txt)</button>
+      <p class="doc-upload-msg" id="docUploadMsg"></p>
+    </div>
+    <ul class="lesson-list" id="docList"></ul>
   </nav>
 
   <section class="panel">
@@ -1016,7 +1035,10 @@ async function loadSavedProgress(userId){
     letterErrors: {},
     letterErrorsByLesson: {},
     attemptsHistory: {},
-    ppmHistory: []
+    ppmHistory: [],
+    documents: {},
+    documentResults: {},
+    documentAttemptsHistory: {}
   };
 
   if(!userId) return empty;
@@ -1059,7 +1081,10 @@ async function loadSavedProgress(userId){
     attemptsHistory: saved.attemptsHistory || {},
     ppmHistory: Array.isArray(saved.ppmHistory)
       ? saved.ppmHistory
-      : []
+      : [],
+    documents: saved.documents && typeof saved.documents === 'object' ? saved.documents : {},
+    documentResults: saved.documentResults && typeof saved.documentResults === 'object' ? saved.documentResults : {},
+    documentAttemptsHistory: saved.documentAttemptsHistory && typeof saved.documentAttemptsHistory === 'object' ? saved.documentAttemptsHistory : {}
   };
 }
 
@@ -1072,6 +1097,13 @@ let lessonDashboardFilter = 'all';
 let currentDashboardLessonIndex = null;
 let attemptsHistory = {};
 let ppmHistory = [];
+
+// Documentos de práctica propios (subidos por el usuario), separados de las 21 lecciones.
+let practiceMode = 'lesson'; // 'lesson' | 'document'
+let currentDocId = null;
+let documents = {};                 // { docId: { name, content, addedAt } }
+let documentResults = {};           // { docId: último intento }
+let documentAttemptsHistory = {};   // { docId: [intentos...] }
 
 // Guarda el progreso del usuario actualmente autenticado en Supabase.
 // upsert() en vez de update(): update() solo modifica una fila que YA existe,
@@ -1089,7 +1121,10 @@ async function saveProgress(){
     letterErrors,
     letterErrorsByLesson,
     attemptsHistory,
-    ppmHistory
+    ppmHistory,
+    documents,
+    documentResults,
+    documentAttemptsHistory
   };
 
   const { error } = await supabaseClient
@@ -1189,12 +1224,16 @@ async function startSession(email, userId){
   letterErrorsByLesson = saved.letterErrorsByLesson;
   attemptsHistory = saved.attemptsHistory;
   ppmHistory = saved.ppmHistory;
+  documents = saved.documents;
+  documentResults = saved.documentResults;
+  documentAttemptsHistory = saved.documentAttemptsHistory;
   userChip.textContent = email;
   userChip.hidden = false;
   logoutBtn.hidden = false;
   feedbackBtn.hidden = false;
   authOverlay.classList.add('hidden');
   renderKeyboard();
+  renderDocList();
   const firstPendingLesson = LESSONS.findIndex((_, index)=> !completedLessons.has(index));
   loadLesson(firstPendingLesson === -1 ? LESSONS.length - 1 : firstPendingLesson);
 }
@@ -1265,6 +1304,11 @@ logoutBtn.onclick = async ()=>{
   letterErrorsByLesson = {};
   attemptsHistory = {};
   ppmHistory = [];
+  documents = {};
+  documentResults = {};
+  documentAttemptsHistory = {};
+  practiceMode = 'lesson';
+  currentDocId = null;
   userChip.hidden = true;
   logoutBtn.hidden = true;
   feedbackBtn.hidden = true;
@@ -1425,6 +1469,49 @@ function svgAttemptsBarChart(bars, opts){
   return `<svg viewBox="0 0 ${o.width} ${o.height}" style="width:100%;height:${o.height}px;display:block;">${body}</svg>`;
 }
 
+function buildDocsSection(){
+  const docIds = Object.keys(documents);
+  if(!docIds.length){
+    return `
+    <div class="feedback-section">
+      <h3>📄 Documentos de práctica</h3>
+      <p class="feedback-section-desc">Sube un documento propio (.txt) desde el panel lateral para practicar con tu propio texto y ver su nota aquí.</p>
+      <p class="feedback-muted">Todavía no subiste ningún documento.</p>
+    </div>`;
+  }
+  const cards = docIds.map(id=>{
+    const doc = documents[id];
+    const hist = documentAttemptsHistory[id] || [];
+    const best = documentResults[id];
+    if(!hist.length){
+      return `<div class="feedback-lesson-card"><div class="feedback-lesson-head"><div><span class="num">📄</span><p class="feedback-lesson-title">${doc.name}</p></div><span class="feedback-badge none">Sin intentos</span></div></div>`;
+    }
+    const bestGrade = Math.max(...hist.map(a=> a.grade));
+    const bestPpm = Math.max(...hist.map(a=> a.ppm));
+    const avgGrade = Math.round(hist.reduce((s,a)=> s+a.grade,0)/hist.length);
+    const avgErr = (hist.reduce((s,a)=> s+a.errorRate,0)/hist.length).toFixed(1);
+    return `<div class="feedback-lesson-card">
+      <div class="feedback-lesson-head">
+        <div><span class="num">📄</span><p class="feedback-lesson-title">${doc.name}</p></div>
+        <span class="feedback-badge ${best && best.grade>=90 ? 'pass':'fail'}">nota ${best ? best.grade : '—'}</span>
+      </div>
+      <div class="feedback-lesson-stats">
+        <span>Intentos: <b>${hist.length}</b></span>
+        <span>Mejor nota: <b>${bestGrade}</b></span>
+        <span>Mejor PPM: <b>${bestPpm}</b></span>
+        <span>Nota media: <b>${avgGrade}</b></span>
+        <span>Error medio: <b>${avgErr}%</b></span>
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="feedback-section">
+      <h3>📄 Documentos de práctica</h3>
+      <p class="feedback-section-desc">Tus propios textos subidos, con la misma calificación que las lecciones oficiales.</p>
+      <div class="feedback-lesson-grid">${cards}</div>
+    </div>`;
+}
+
 function renderFeedbackDashboard(){
   const attemptsAll = [];
   Object.keys(attemptsHistory).forEach(k=>{
@@ -1432,7 +1519,7 @@ function renderFeedbackDashboard(){
   });
 
   if(!attemptsAll.length){
-    feedbackContent.innerHTML = '<p class="feedback-muted">Todavía no hay intentos registrados. Completa (o intenta) alguna lección para ver tus estadísticas aquí.</p>';
+    feedbackContent.innerHTML = '<p class="feedback-muted">Todavía no hay intentos registrados. Completa (o intenta) alguna lección para ver tus estadísticas aquí.</p>' + buildDocsSection();
     return;
   }
 
@@ -1645,6 +1732,8 @@ function renderFeedbackDashboard(){
       <p class="feedback-section-desc">Cada una de las ${LESSONS.length} lecciones, con su propio historial de intentos, mejor nota, PPM y error promedio. Haz clic en cualquier lección para ver sus estadísticas propias.</p>
       <div class="feedback-lesson-grid">${lessonCards}</div>
     </div>
+
+    ${buildDocsSection()}
   `;
 }
 
@@ -1822,7 +1911,7 @@ function renderSidebar(){
   LESSONS.forEach((les, i)=>{
     const li = document.createElement('li');
     const unlocked = isLessonUnlocked(i);
-    li.className = 'lesson-item' + (i===current?' active':'') + (completedLessons.has(i)?' done':'') + (unlocked?'':' locked');
+    li.className = 'lesson-item' + (practiceMode === 'lesson' && i===current?' active':'') + (completedLessons.has(i)?' done':'') + (unlocked?'':' locked');
     li.innerHTML = `<span class="lesson-num">${completedLessons.has(i)?'✓':unlocked?i+1:'🔒'}</span><span>${les.t.split('·')[0].split(':')[0].trim()}</span>`;
     if(unlocked) li.onclick = ()=> loadLesson(i);
     lessonList.appendChild(li);
@@ -1885,6 +1974,8 @@ const pauseOverlay = document.getElementById('pauseOverlay');
 
 function loadLesson(i){
   if(!isLessonUnlocked(i)) return;
+  practiceMode = 'lesson';
+  currentDocId = null;
   current = i;
   typed = ""; errors = 0; startTime = null; finished = false; lockedError = false; errorRecordedAt = -1;
   isPaused = false; pausedAt = null; pausedDuration = 0;
@@ -1896,6 +1987,7 @@ function loadLesson(i){
   hintText.classList.remove('error');
   hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para aprobar: ${minGradeFor(i)}. El % de error influye en tu nota. Esc para pausar.`;
   document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').hidden = false;
   pauseBtn.disabled = true;
   pauseBtn.textContent = 'Ⅱ Pausar';
   typeField.classList.remove('paused');
@@ -1905,10 +1997,125 @@ function loadLesson(i){
   typeField.scrollTop = 0;
   requestAnimationFrame(()=>{ typeField.scrollTop = 0; });
   renderSidebar();
+  renderDocList();
   hiddenInput.value = "";
   typeField.focus({preventScroll:true});
   hiddenInput.focus({preventScroll:true});
 }
+
+// Practicar con un documento propio (subido por el usuario), en vez de una de las 21 lecciones.
+// Reutiliza exactamente el mismo motor de escritura y la misma calificación.
+function loadDocument(docId){
+  const doc = documents[docId];
+  if(!doc) return;
+  practiceMode = 'document';
+  currentDocId = docId;
+  typed = ""; errors = 0; startTime = null; finished = false; lockedError = false; errorRecordedAt = -1;
+  isPaused = false; pausedAt = null; pausedDuration = 0;
+  lastActiveLine = -1;
+  prepareExercise(doc.content);
+  document.getElementById('lessonTitle').textContent = `📄 ${doc.name}`;
+  document.getElementById('lessonDesc').textContent = 'Documento de práctica propio (no forma parte de las 21 lecciones oficiales).';
+  document.getElementById('resultBox').classList.remove('show');
+  hintText.classList.remove('error');
+  hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para "aprobar": 90 (informativo, no bloquea nada). Esc para pausar.`;
+  document.getElementById('nextBtn').hidden = true;
+  pauseBtn.disabled = true;
+  pauseBtn.textContent = 'Ⅱ Pausar';
+  typeField.classList.remove('paused');
+  pauseOverlay.classList.remove('show');
+  updateStats();
+  renderText();
+  typeField.scrollTop = 0;
+  requestAnimationFrame(()=>{ typeField.scrollTop = 0; });
+  renderSidebar();
+  renderDocList();
+  hiddenInput.value = "";
+  typeField.focus({preventScroll:true});
+  hiddenInput.focus({preventScroll:true});
+}
+
+function renderDocList(){
+  const docList = document.getElementById('docList');
+  if(!docList) return;
+  const ids = Object.keys(documents);
+  if(!ids.length){
+    docList.innerHTML = '<li class="doc-list-empty">Todavía no subiste ningún documento.</li>';
+    return;
+  }
+  docList.innerHTML = "";
+  ids.forEach(id=>{
+    const doc = documents[id];
+    const li = document.createElement('li');
+    const best = documentResults[id];
+    li.className = 'lesson-item' + (practiceMode === 'document' && currentDocId === id ? ' active' : '');
+    li.innerHTML = `<span class="lesson-num">📄</span><span style="flex:1;">${doc.name}${best ? ` · nota ${best.grade}` : ''}</span>` +
+      `<span class="doc-item-actions"><button type="button" class="doc-delete-btn" title="Eliminar documento">✕</button></span>`;
+    li.querySelector('span:nth-child(2)').onclick = ()=> loadDocument(id);
+    li.querySelector('.doc-delete-btn').onclick = (e)=>{
+      e.stopPropagation();
+      if(!confirm(`¿Eliminar el documento "${doc.name}"? Se borrará también su historial de práctica.`)) return;
+      delete documents[id];
+      delete documentResults[id];
+      delete documentAttemptsHistory[id];
+      if(practiceMode === 'document' && currentDocId === id){
+        practiceMode = 'lesson';
+        currentDocId = null;
+        loadLesson(current);
+      }
+      renderDocList();
+      saveProgress();
+    };
+    docList.appendChild(li);
+  });
+}
+
+const DOC_MAX_CHARS = 20000; // límite razonable para no inflar la fila en Supabase ni trabar el motor de renglones
+
+const docFileInput = document.getElementById('docFileInput');
+const docUploadBtn = document.getElementById('docUploadBtn');
+const docUploadMsg = document.getElementById('docUploadMsg');
+
+docUploadBtn.onclick = ()=> docFileInput.click();
+
+docFileInput.addEventListener('change', ()=>{
+  const file = docFileInput.files[0];
+  if(!file) return;
+  docUploadMsg.classList.remove('error');
+  docUploadMsg.textContent = 'Leyendo archivo…';
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let text = String(reader.result || '').trim();
+    if(!text){
+      docUploadMsg.classList.add('error');
+      docUploadMsg.textContent = 'Ese archivo está vacío.';
+      docFileInput.value = '';
+      return;
+    }
+    let truncated = false;
+    if(text.length > DOC_MAX_CHARS){
+      text = text.slice(0, DOC_MAX_CHARS);
+      truncated = true;
+    }
+    const name = file.name.replace(/\.txt$/i, '').slice(0, 60) || 'Documento';
+    const id = 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    documents[id] = { name, content: text, addedAt: new Date().toISOString() };
+    saveProgress();
+    renderDocList();
+    docUploadMsg.classList.toggle('error', truncated);
+    docUploadMsg.textContent = truncated
+      ? `Agregado, pero se recortó a ${DOC_MAX_CHARS.toLocaleString()} caracteres (el archivo era más largo).`
+      : `"${name}" agregado. Hacé clic en él para empezar a practicar.`;
+    docFileInput.value = '';
+    loadDocument(id);
+  };
+  reader.onerror = ()=>{
+    docUploadMsg.classList.add('error');
+    docUploadMsg.textContent = 'No se pudo leer ese archivo.';
+    docFileInput.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+});
 
 function renderText(){
   const target = exerciseTarget;
@@ -2102,6 +2309,35 @@ function finishLesson(){
   pauseBtn.disabled = true;
   pauseBtn.textContent = 'Ⅱ Pausar';
   const metrics = getMetrics();
+  const resultMsg = document.getElementById('resultMsg');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if(practiceMode === 'document'){
+    const attemptRecord = {
+      ppm:metrics.ppm,
+      grade:metrics.grade,
+      accuracy:Number(metrics.accuracy.toFixed(1)),
+      errors,
+      errorRate:Number(metrics.errorRate.toFixed(1)),
+      maxErrorRate:metrics.maxErrorRate,
+      elapsedMs:metrics.elapsed,
+      date:new Date().toISOString()
+    };
+    documentResults[currentDocId] = attemptRecord;
+    if(!documentAttemptsHistory[currentDocId]) documentAttemptsHistory[currentDocId] = [];
+    documentAttemptsHistory[currentDocId].push(attemptRecord);
+    if(documentAttemptsHistory[currentDocId].length > 20) documentAttemptsHistory[currentDocId].shift();
+    saveProgress();
+    renderDocList();
+    resultMsg.innerHTML =
+      `Documento completado — <b>${metrics.ppm} PPM</b>, nota <b>${metrics.grade}</b>, error <b>${metrics.errorRate.toFixed(1)}%</b>.`;
+    hintText.classList.remove('error');
+    hintText.textContent = 'Práctica de documento guardada. Podés reintentarlo cuando quieras.';
+    document.getElementById('resultBox').classList.add('show');
+    highlightKey(undefined, false);
+    return;
+  }
+
   const requiredGrade = minGradeFor(current);
   const passed = metrics.grade >= requiredGrade;
   if(passed) completedLessons.add(current);
@@ -2124,8 +2360,6 @@ function finishLesson(){
   ppmHistory.push({date:attemptRecord.date, lesson:current, ppm:metrics.ppm, grade:metrics.grade, passed});
   if(ppmHistory.length > 60) ppmHistory.shift();
   saveProgress();
-  const resultMsg = document.getElementById('resultMsg');
-  const nextBtn = document.getElementById('nextBtn');
   if(passed){
     resultMsg.innerHTML =
       `Lección aprobada — <b>${metrics.ppm} PPM</b>, nota <b>${metrics.grade}</b> (mínimo exigido: ${requiredGrade}), error <b>${metrics.errorRate.toFixed(1)}%</b>.`;
@@ -2143,9 +2377,10 @@ function finishLesson(){
   highlightKey(undefined, false);
 }
 
-document.getElementById('retryBtn').onclick = ()=> loadLesson(current);
-document.getElementById('resetBtn').onclick = ()=> loadLesson(current);
+document.getElementById('retryBtn').onclick = ()=> practiceMode === 'document' ? loadDocument(currentDocId) : loadLesson(current);
+document.getElementById('resetBtn').onclick = ()=> practiceMode === 'document' ? loadDocument(currentDocId) : loadLesson(current);
 document.getElementById('nextBtn').onclick = ()=>{
+  if(practiceMode === 'document') return;
   if(!document.getElementById('nextBtn').disabled && current < LESSONS.length - 1) loadLesson(current+1);
 };
 
