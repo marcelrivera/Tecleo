@@ -662,6 +662,24 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
 .key.arrow{min-width:30px;font-size:.68rem;}
 /* ---- Feedback dashboard: KPIs ---- */
 .feedback-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0 22px;}
+.coach-advice{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:10px;}
+.coach-advice li{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--panel-alt);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;font-size:0.86rem;line-height:1.45;
+}
+.coach-advice li .icon{flex:none;font-size:1.1rem;line-height:1.3;}
+.coach-finger-bars{display:flex;flex-direction:column;gap:6px;margin:10px 0 20px;}
+.coach-finger-row{display:flex;align-items:center;gap:8px;font-size:0.8rem;}
+.coach-finger-label{width:150px;flex:none;color:var(--paper);}
+.coach-finger-track{flex:1;height:9px;border-radius:5px;background:var(--panel);border:1px solid var(--border);overflow:hidden;}
+.coach-finger-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--brick));}
+.coach-finger-pct{width:44px;text-align:right;color:var(--muted);font-size:0.75rem;flex:none;}
+.coach-exercise-box{
+  background:var(--panel-alt);border:1px solid var(--accent);border-radius:10px;
+  padding:16px;margin-top:6px;text-align:center;
+}
+.coach-exercise-box p{margin:0 0 12px;font-size:0.85rem;color:var(--paper);}
 .chart-tooltip{
   position:fixed;
   z-index:200;
@@ -771,6 +789,7 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
     <span class="user-chip" id="userChip" hidden></span>
     <button class="theme-toggle" id="themeToggle">🌙 Modo oscuro</button>
     <button class="logout-btn" id="feedbackBtn" hidden>📊 Mi progreso</button>
+    <button class="logout-btn" id="coachBtn" hidden>🎯 Coach IA</button>
     <button class="logout-btn" id="logoutBtn" hidden>Salir</button>
   </div>
 </div>
@@ -782,10 +801,10 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
     <ul class="lesson-list" id="lessonList"></ul>
 
     <h2 style="margin-top:18px;">Documentos de práctica</h2>
-    <p class="progress-summary">Sube un texto propio (.txt) y practica con él, con la misma calificación.</p>
+    <p class="progress-summary">Sube un texto propio (.txt o .pdf) y practica con él, con la misma calificación.</p>
     <div class="doc-upload">
-      <input type="file" id="docFileInput" accept=".txt,text/plain" hidden>
-      <button type="button" class="reset-btn" id="docUploadBtn" style="width:100%;">＋ Subir documento (.txt)</button>
+      <input type="file" id="docFileInput" accept=".txt,.pdf,text/plain,application/pdf" hidden>
+      <button type="button" class="reset-btn" id="docUploadBtn" style="width:100%;">＋ Subir documento (.txt o .pdf)</button>
       <p class="doc-upload-msg" id="docUploadMsg"></p>
     </div>
     <ul class="lesson-list" id="docList"></ul>
@@ -883,11 +902,27 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
   </div>
 </div>
 
+<div class="auth-overlay hidden" id="coachOverlay" style="z-index:60;">
+  <div class="auth-card" style="position:relative;width:min(97%,760px);max-height:92vh;padding:0;overflow:hidden;">
+    <button class="macos-close" id="coachCloseBtn" type="button" aria-label="Cerrar" title="Cerrar"><span>✕</span></button>
+    <div class="auth-card-scroll" style="max-height:92vh;overflow-y:auto;padding:30px;text-align:left;">
+      <div class="auth-icon">🎯</div>
+      <h2>Coach IA</h2>
+      <p>Analiza tus estadísticas reales (letras, dedos, velocidad) y te arma consejos y un ejercicio de práctica hecho a tu medida.</p>
+      <div id="coachContent"></div>
+    </div>
+  </div>
+</div>
+
 <div id="chartTooltip" class="chart-tooltip"></div>
 
 <footer>Tecleo — proyecto de práctica de mecanografía</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+</script>
 <script>
 const supabaseUrl = "https://mcxxfjtcbnzbxgxqnbcy.supabase.co";
 const supabaseKey = "sb_publishable_mCyDkBeQsDC1NkC9XwX7tA_6_lG4J0m";
@@ -1202,10 +1237,13 @@ const lessonDashboardTitle = document.getElementById('lessonDashboardTitle');
 const feedbackBtn = document.getElementById('feedbackBtn');
 const feedbackOverlay = document.getElementById('feedbackOverlay');
 const feedbackContent = document.getElementById('feedbackContent');
+const coachBtn = document.getElementById('coachBtn');
+const coachOverlay = document.getElementById('coachOverlay');
+const coachContent = document.getElementById('coachContent');
 
 // Cerrar estos paneles también al hacer clic en el fondo (fuera de la tarjeta).
 // El de inicio de sesión (authOverlay) queda excluido a propósito: ese sigue siendo obligatorio.
-[lessonDashboardOverlay, feedbackOverlay].forEach(overlay=>{
+[lessonDashboardOverlay, feedbackOverlay, coachOverlay].forEach(overlay=>{
   overlay.addEventListener('click', (e)=>{
     if(e.target === overlay) overlay.classList.add('hidden');
   });
@@ -1230,6 +1268,7 @@ async function startSession(email, userId){
   userChip.hidden = false;
   logoutBtn.hidden = false;
   feedbackBtn.hidden = false;
+  coachBtn.hidden = false;
   authOverlay.classList.add('hidden');
   renderKeyboard();
   renderDocList();
@@ -1311,6 +1350,8 @@ logoutBtn.onclick = async ()=>{
   userChip.hidden = true;
   logoutBtn.hidden = true;
   feedbackBtn.hidden = true;
+  coachBtn.hidden = true;
+  coachOverlay.classList.add('hidden');
   feedbackOverlay.classList.add('hidden');
   authOverlay.classList.remove('hidden');
   loginForm.reset();
@@ -1399,6 +1440,270 @@ function formatDateShort(iso){
 function escAttr(s){
   return String(s).replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
 }
+
+/* ================= Coach IA =================
+   Analiza las estadísticas reales del usuario (letras, dedos, velocidad, lecciones
+   más difíciles) con reglas propias — no llama a ningún modelo externo, porque hacerlo
+   desde el navegador expondría la clave de API de cualquier proveedor de IA a
+   cualquiera que abra el archivo. En cambio, el "coach" es un motor de reglas que lee
+   los mismos datos que ya se guardan en Supabase y arma consejos + un ejercicio de
+   práctica dirigido específicamente a lo que más te cuesta. */
+
+const FINGER_ANCHOR = {lp:'a', lr:'s', lm:'d', li:'f', ri:'j', rm:'k', rr:'l', rp:'ñ', th:' '};
+let lastCoachExerciseText = '';
+let lastCoachWeakLetters = [];
+
+// Llama a la Edge Function real de Supabase (coach-ai), que a su vez llama a la API de
+// Anthropic con la clave guardada como secreto del lado del servidor (nunca en el navegador).
+// Si la clave todavía no está configurada, o falla la red, se muestra un aviso claro y el
+// resto del coach (basado en reglas, siempre disponible) sigue funcionando sin problema.
+async function fetchAiCoachAdvice(stats){
+  const box = document.getElementById('coachAiBox');
+  if(!box) return;
+  try{
+    const { data, error } = await supabaseClient.functions.invoke('coach-ai', {
+      body: {
+        letterRates: stats.letterRates.slice(0, 5).map(e=> ({ letra: e.ch === ' ' ? 'espacio' : e.ch, error_pct: Number(e.rate.toFixed(1)) })),
+        fingerRates: stats.fingerRates.slice(0, 5).map(f=> ({ dedo: f.name, error_pct: Number(f.rate.toFixed(1)) })),
+        ppmTrend: stats.ppmTrend,
+        avgPpm: stats.avgPpm,
+        hardestLesson: stats.hardestLesson,
+        hardestFailed: stats.hardestFailed
+      }
+    });
+
+    if(error || !data || data.error){
+      const reason = data && data.error === 'missing_api_key'
+        ? 'El Coach IA todavía no está activado en este proyecto (falta configurar la clave de Anthropic como secreto en Supabase).'
+        : 'No se pudo generar el consejo con IA en este momento.';
+      box.innerHTML = `<p class="feedback-muted">${reason} Mientras tanto, seguí los consejos basados en tus estadísticas de abajo.</p>`;
+      return;
+    }
+
+    const lines = String(data.advice || '').split('\n').map(l=> l.trim()).filter(Boolean);
+    box.innerHTML = lines.length
+      ? `<ul class="coach-advice">${lines.map(l=> `<li><span class="icon">✨</span><span>${l}</span></li>`).join('')}</ul>`
+      : '<p class="feedback-muted">El coach de IA no devolvió ningún consejo esta vez.</p>';
+  } catch(err){
+    console.error('Error llamando al Coach IA:', err);
+    box.innerHTML = '<p class="feedback-muted">No se pudo conectar con el Coach IA. Mostrando solo el análisis basado en tus estadísticas.</p>';
+  }
+}
+
+function analyzeCoachStats(){
+  // Frecuencia real de cada letra en TODAS las lecciones que ya intentaste, ponderada
+  // por cuántas veces intentaste cada una (mismo criterio que usa el dashboard).
+  const attemptedFreq = {};
+  Object.keys(attemptsHistory).forEach(k=>{
+    const lessonIndex = Number(k);
+    const attempts = attemptsHistory[k].length;
+    const freq = charFrequency(LESSONS[lessonIndex].x);
+    Object.keys(freq).forEach(ch=>{
+      attemptedFreq[ch] = (attemptedFreq[ch] || 0) + freq[ch] * attempts;
+    });
+  });
+
+  const letterRates = buildErrorRateEntries(letterErrors, attemptedFreq, 3);
+
+  // Agrupa el error por dedo (suma errores y apariciones de todas las letras de ese dedo).
+  const fingerStats = {};
+  letterRates.forEach(e=>{
+    const finger = FINGER[e.ch];
+    if(!finger) return;
+    if(!fingerStats[finger]) fingerStats[finger] = {errors:0, freq:0};
+    fingerStats[finger].errors += e.errs;
+    fingerStats[finger].freq += e.freq;
+  });
+  const fingerRates = Object.keys(fingerStats).map(f=>{
+    const s = fingerStats[f];
+    return {finger:f, name:FINGER_NAME[f] || f, rate: s.freq ? (s.errors/s.freq)*100 : 0, errors:s.errors, freq:s.freq};
+  }).filter(f=> f.freq >= 5).sort((a,b)=> b.rate - a.rate);
+
+  // Tendencia de velocidad: promedio de la primera mitad vs la segunda mitad del historial.
+  let ppmTrend = 0, avgPpm = 0;
+  if(ppmHistory.length){
+    avgPpm = Math.round(ppmHistory.reduce((s,p)=> s+p.ppm, 0) / ppmHistory.length);
+    const half = Math.max(1, Math.floor(ppmHistory.length/2));
+    const firstAvg = ppmHistory.slice(0, half).reduce((s,p)=> s+p.ppm, 0) / half;
+    const secondAvg = ppmHistory.slice(-half).reduce((s,p)=> s+p.ppm, 0) / half;
+    ppmTrend = ppmHistory.length >= 4 ? secondAvg - firstAvg : 0;
+  }
+
+  // Lección con más intentos fallidos.
+  let hardestLesson = null, hardestFailed = -1;
+  Object.keys(attemptsHistory).forEach(k=>{
+    const failed = attemptsHistory[k].filter(a=> !a.passed).length;
+    if(failed > hardestFailed){ hardestFailed = failed; hardestLesson = Number(k); }
+  });
+
+  return { letterRates, fingerRates, ppmTrend, avgPpm, hardestLesson, hardestFailed };
+}
+
+function renderCoachAdvice(stats){
+  const advice = [];
+
+  if(stats.letterRates.length){
+    const top = stats.letterRates.slice(0, 3);
+    const list = top.map(e=> `<b>${e.ch===' '?'espacio':e.ch}</b> (${e.rate.toFixed(1)}% de error)`).join(', ');
+    advice.push({icon:'🔤', text:`Tus letras más débiles son ${list}. Cuando practiques, presta especial atención a esas teclas — el ejercicio de abajo está armado justo alrededor de ellas.`});
+  } else {
+    advice.push({icon:'👍', text:'Todavía no tengo suficientes datos de error por letra (necesitas practicar un poco más para que el análisis sea confiable).'});
+  }
+
+  if(stats.fingerRates.length){
+    const worst = stats.fingerRates[0];
+    advice.push({icon:'🖐️', text:`Tu <b>${worst.name}</b> es el que más te cuesta coordinar: concentra un ${worst.rate.toFixed(1)}% de error sobre las teclas que le corresponden. Vale la pena hacer drills cortos anclados en su tecla base antes de acelerar.`});
+    if(stats.fingerRates.length > 1){
+      const best = stats.fingerRates[stats.fingerRates.length - 1];
+      advice.push({icon:'✅', text:`En cambio tu <b>${best.name}</b> es el más confiable (${best.rate.toFixed(1)}% de error) — ese ya lo tenés dominado.`});
+    }
+  }
+
+  if(stats.ppmTrend > 1){
+    advice.push({icon:'📈', text:`Tu velocidad viene mejorando: subiste unos ${stats.ppmTrend.toFixed(1)} PPM comparando tu primera mitad de intentos con la más reciente. Vas bien encaminado.`});
+  } else if(stats.ppmTrend < -1){
+    advice.push({icon:'📉', text:`Tu velocidad bajó unos ${Math.abs(stats.ppmTrend).toFixed(1)} PPM últimamente. Puede ser cansancio o estar practicando lecciones más difíciles — no te preocupes, es normal, priorizá precisión antes que velocidad por un tiempo.`});
+  } else if(stats.avgPpm){
+    advice.push({icon:'⏱️', text:`Tu velocidad se mantiene estable alrededor de ${stats.avgPpm} PPM. Para subirla, el mejor camino es bajar primero tu tasa de error en las letras débiles de arriba — la velocidad real sale de escribir sin tener que corregir.`});
+  }
+
+  if(stats.hardestLesson !== null && stats.hardestFailed > 0){
+    const title = LESSONS[stats.hardestLesson] ? LESSONS[stats.hardestLesson].t : `Lección ${stats.hardestLesson+1}`;
+    advice.push({icon:'🎯', text:`La lección que más se te resiste es <b>${stats.hardestLesson+1}. ${title}</b>, con ${stats.hardestFailed} intento(s) sin aprobar. Si querés, volvé a intentarla después de este ejercicio personalizado.`});
+  }
+
+  return advice.map(a=> `<li><span class="icon">${a.icon}</span><span>${a.text}</span></li>`).join('');
+}
+
+function renderCoachFingerBars(fingerRates){
+  if(!fingerRates.length) return '<p class="feedback-muted">Todavía no hay suficientes intentos para medir tus dedos individualmente.</p>';
+  const maxRate = Math.max(...fingerRates.map(f=> f.rate), 1);
+  return fingerRates.map(f=>{
+    const pct = Math.min(100, Math.round((f.rate/maxRate)*100));
+    return `<div class="coach-finger-row"><span class="coach-finger-label">${f.name}</span><div class="coach-finger-track"><div class="coach-finger-fill" style="width:${pct}%"></div></div><span class="coach-finger-pct">${f.rate.toFixed(1)}%</span></div>`;
+  }).join('');
+}
+
+// Busca palabras reales (ya usadas en las 21 lecciones oficiales) que contengan
+// alguna de las letras débiles, para mezclarlas con drills de dedos.
+function findRealWordsWithLetters(letters, minLen, max){
+  const letterSet = new Set(letters);
+  const found = new Set();
+  LESSONS.forEach(l=>{
+    l.x.split(/\s+/).forEach(raw=>{
+      const clean = raw.toLowerCase().replace(/[^a-zñ]/g, '');
+      if(clean.length >= minLen && [...letterSet].some(ch=> clean.includes(ch))){
+        found.add(clean);
+      }
+      if(found.size >= max * 3) return;
+    });
+  });
+  return [...found].sort(()=> Math.random() - 0.5).slice(0, max);
+}
+
+// Drills tipo ancla-letra-ancla (el mismo estilo usado en las lecciones de introducción),
+// pero generados en el momento para las letras específicas donde más fallás.
+function buildFingerDrills(letters){
+  const seqs = new Set();
+  letters.forEach(ch=>{
+    const finger = FINGER[ch];
+    const anchor = FINGER_ANCHOR[finger];
+    if(!anchor || anchor === ch || anchor === ' '){ seqs.add(ch+ch+ch+ch); return; }
+    seqs.add(anchor+ch+anchor);
+    seqs.add(ch+anchor+ch+anchor);
+    seqs.add(anchor+ch+anchor+ch+anchor);
+  });
+  return [...seqs];
+}
+
+function buildCoachExerciseText(weakLetters){
+  if(!weakLetters.length){
+    // Sin datos suficientes: arma un repaso general con letras variadas.
+    weakLetters = ['a','s','d','f','j','k','l','e','r'];
+  }
+  const drills = buildFingerDrills(weakLetters);
+  const words = findRealWordsWithLetters(weakLetters, 4, 80);
+  const pool = [];
+  const targetTotal = 200;
+  let i = 0;
+  while(pool.length < targetTotal && (drills.length || words.length)){
+    if(drills.length) pool.push(drills[i % drills.length]);
+    if(words.length) pool.push(words[i % words.length]);
+    i++;
+    if(i > targetTotal * 2) break;
+  }
+  return pool.slice(0, targetTotal).join(' ');
+}
+
+function renderCoachDashboard(){
+  const attemptedAny = Object.keys(attemptsHistory).length > 0;
+  if(!attemptedAny){
+    coachContent.innerHTML = '<p class="feedback-muted">Todavía no hay intentos registrados. Practica alguna lección primero para que el coach tenga datos reales que analizar.</p>';
+    return;
+  }
+  const stats = analyzeCoachStats();
+  const weakLetters = stats.letterRates.slice(0, 5).map(e=> e.ch).filter(ch=> ch !== ' ');
+  coachContent.innerHTML = `
+    <div class="feedback-section" style="margin-bottom:16px;">
+      <h3 style="font-size:0.9rem;margin:0 0 8px;color:var(--accent);">✨ Consejo del Coach IA</h3>
+      <div id="coachAiBox"><p class="feedback-muted">Generando consejo con IA…</p></div>
+    </div>
+
+    <ul class="coach-advice">${renderCoachAdvice(stats)}</ul>
+
+    <h3 style="font-size:0.95rem;margin:0 0 6px;">Rendimiento por dedo</h3>
+    <div class="coach-finger-bars">${renderCoachFingerBars(stats.fingerRates)}</div>
+
+    <div class="coach-exercise-box">
+      <p>Ejercicio armado específicamente con tus letras más débiles${weakLetters.length ? ': <b>' + weakLetters.map(c=>c===' '?'espacio':c).join(', ') + '</b>' : ''}.</p>
+      <button class="primary" id="coachGenerateBtn" type="button">🎯 Empezar ejercicio personalizado</button>
+    </div>
+  `;
+  document.getElementById('coachGenerateBtn').onclick = ()=>{
+    const text = buildCoachExerciseText(weakLetters);
+    loadCoachExercise(text, weakLetters);
+    coachOverlay.classList.add('hidden');
+  };
+  fetchAiCoachAdvice(stats);
+}
+
+function loadCoachExercise(text, weakLetters){
+  lastCoachExerciseText = text;
+  lastCoachWeakLetters = weakLetters;
+  practiceMode = 'coach';
+  currentDocId = null;
+  typed = ""; errors = 0; startTime = null; finished = false; lockedError = false; errorRecordedAt = -1;
+  isPaused = false; pausedAt = null; pausedDuration = 0;
+  lastActiveLine = -1;
+  prepareExercise(text);
+  document.getElementById('lessonTitle').textContent = '🎯 Ejercicio personalizado del Coach IA';
+  document.getElementById('lessonDesc').textContent = weakLetters.length
+    ? `Enfocado en tus letras más débiles: ${weakLetters.map(c=>c===' '?'espacio':c).join(', ')}.`
+    : 'Repaso general (todavía no hay suficientes datos de error para personalizarlo más).';
+  document.getElementById('resultBox').classList.remove('show');
+  hintText.classList.remove('error');
+  hintText.textContent = `${exerciseLines.length} renglones · Ejercicio generado por el coach, no forma parte de las 21 lecciones. Esc para pausar.`;
+  document.getElementById('nextBtn').hidden = true;
+  pauseBtn.disabled = true;
+  pauseBtn.textContent = 'Ⅱ Pausar';
+  typeField.classList.remove('paused');
+  pauseOverlay.classList.remove('show');
+  updateStats();
+  renderText();
+  typeField.scrollTop = 0;
+  requestAnimationFrame(()=>{ typeField.scrollTop = 0; });
+  renderSidebar();
+  renderDocList();
+  hiddenInput.value = "";
+  typeField.focus({preventScroll:true});
+  hiddenInput.focus({preventScroll:true});
+}
+
+coachBtn.onclick = ()=>{
+  renderCoachDashboard();
+  coachOverlay.classList.remove('hidden');
+};
+document.getElementById('coachCloseBtn').onclick = ()=> coachOverlay.classList.add('hidden');
 
 function showChartTooltip(evt, label, value){
   const tip = document.getElementById('chartTooltip');
@@ -2070,6 +2375,7 @@ function renderDocList(){
 }
 
 const DOC_MAX_CHARS = 20000; // límite razonable para no inflar la fila en Supabase ni trabar el motor de renglones
+const DOC_MAX_PDF_PAGES = 60; // tope de páginas a leer de un PDF (por rendimiento, no por límite de texto)
 
 const docFileInput = document.getElementById('docFileInput');
 const docUploadBtn = document.getElementById('docUploadBtn');
@@ -2077,37 +2383,82 @@ const docUploadMsg = document.getElementById('docUploadMsg');
 
 docUploadBtn.onclick = ()=> docFileInput.click();
 
-docFileInput.addEventListener('change', ()=>{
+// Extrae el texto de un PDF usando pdf.js, página por página, directamente en el navegador
+// (no se sube el archivo a ningún servidor).
+async function extractPdfText(file){
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  const pageCount = Math.min(pdf.numPages, DOC_MAX_PDF_PAGES);
+  for(let i = 1; i <= pageCount; i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    fullText += content.items.map(item=> item.str).join(' ') + ' ';
+    if(fullText.length > DOC_MAX_CHARS * 2) break; // ya hay de sobra, no sigas procesando páginas
+  }
+  return fullText.replace(/\s+/g, ' ').trim();
+}
+
+function finishDocUpload(file, rawText, isPdf){
+  let text = String(rawText || '').trim();
+  if(!text){
+    docUploadMsg.classList.add('error');
+    docUploadMsg.textContent = isPdf
+      ? 'No se pudo extraer texto de ese PDF (¿es un escaneo de imagen sin texto real?).'
+      : 'Ese archivo está vacío.';
+    docFileInput.value = '';
+    return;
+  }
+  let truncated = false;
+  if(text.length > DOC_MAX_CHARS){
+    text = text.slice(0, DOC_MAX_CHARS);
+    truncated = true;
+  }
+  const name = file.name.replace(/\.(txt|pdf)$/i, '').slice(0, 60) || 'Documento';
+  const id = 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  documents[id] = { name, content: text, addedAt: new Date().toISOString() };
+  saveProgress();
+  renderDocList();
+  docUploadMsg.classList.toggle('error', truncated);
+  docUploadMsg.textContent = truncated
+    ? `Agregado, pero se recortó a ${DOC_MAX_CHARS.toLocaleString()} caracteres (el archivo era más largo).`
+    : `"${name}" agregado. Hacé clic en él para empezar a practicar.`;
+  docFileInput.value = '';
+  loadDocument(id);
+}
+
+docFileInput.addEventListener('change', async ()=>{
   const file = docFileInput.files[0];
   if(!file) return;
   docUploadMsg.classList.remove('error');
+
+  const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
+  const isTxt = /\.txt$/i.test(file.name) || file.type === 'text/plain';
+
+  if(!isPdf && !isTxt){
+    docUploadMsg.classList.add('error');
+    docUploadMsg.textContent = 'Solo se aceptan archivos .txt o .pdf.';
+    docFileInput.value = '';
+    return;
+  }
+
+  if(isPdf){
+    docUploadMsg.textContent = 'Extrayendo texto del PDF…';
+    try{
+      const text = await extractPdfText(file);
+      finishDocUpload(file, text, true);
+    } catch(error){
+      console.error('Error leyendo PDF:', error);
+      docUploadMsg.classList.add('error');
+      docUploadMsg.textContent = 'No se pudo leer ese PDF. Puede estar dañado, protegido o ser un escaneo sin texto seleccionable.';
+      docFileInput.value = '';
+    }
+    return;
+  }
+
   docUploadMsg.textContent = 'Leyendo archivo…';
   const reader = new FileReader();
-  reader.onload = ()=>{
-    let text = String(reader.result || '').trim();
-    if(!text){
-      docUploadMsg.classList.add('error');
-      docUploadMsg.textContent = 'Ese archivo está vacío.';
-      docFileInput.value = '';
-      return;
-    }
-    let truncated = false;
-    if(text.length > DOC_MAX_CHARS){
-      text = text.slice(0, DOC_MAX_CHARS);
-      truncated = true;
-    }
-    const name = file.name.replace(/\.txt$/i, '').slice(0, 60) || 'Documento';
-    const id = 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-    documents[id] = { name, content: text, addedAt: new Date().toISOString() };
-    saveProgress();
-    renderDocList();
-    docUploadMsg.classList.toggle('error', truncated);
-    docUploadMsg.textContent = truncated
-      ? `Agregado, pero se recortó a ${DOC_MAX_CHARS.toLocaleString()} caracteres (el archivo era más largo).`
-      : `"${name}" agregado. Hacé clic en él para empezar a practicar.`;
-    docFileInput.value = '';
-    loadDocument(id);
-  };
+  reader.onload = ()=> finishDocUpload(file, reader.result, false);
   reader.onerror = ()=>{
     docUploadMsg.classList.add('error');
     docUploadMsg.textContent = 'No se pudo leer ese archivo.';
@@ -2311,6 +2662,16 @@ function finishLesson(){
   const resultMsg = document.getElementById('resultMsg');
   const nextBtn = document.getElementById('nextBtn');
 
+  if(practiceMode === 'coach'){
+    resultMsg.innerHTML =
+      `Ejercicio personalizado completado — <b>${metrics.ppm} PPM</b>, nota <b>${metrics.grade}</b>, error <b>${metrics.errorRate.toFixed(1)}%</b>.`;
+    hintText.classList.remove('error');
+    hintText.textContent = 'Este ejercicio no se guarda en tu historial (se genera de nuevo cada vez según tus estadísticas). Podés reintentarlo o pedir uno nuevo desde el Coach IA.';
+    document.getElementById('resultBox').classList.add('show');
+    highlightKey(undefined, false);
+    return;
+  }
+
   if(practiceMode === 'document'){
     const attemptRecord = {
       ppm:metrics.ppm,
@@ -2376,10 +2737,18 @@ function finishLesson(){
   highlightKey(undefined, false);
 }
 
-document.getElementById('retryBtn').onclick = ()=> practiceMode === 'document' ? loadDocument(currentDocId) : loadLesson(current);
-document.getElementById('resetBtn').onclick = ()=> practiceMode === 'document' ? loadDocument(currentDocId) : loadLesson(current);
+document.getElementById('retryBtn').onclick = ()=>{
+  if(practiceMode === 'coach') loadCoachExercise(lastCoachExerciseText, lastCoachWeakLetters);
+  else if(practiceMode === 'document') loadDocument(currentDocId);
+  else loadLesson(current);
+};
+document.getElementById('resetBtn').onclick = ()=>{
+  if(practiceMode === 'coach') loadCoachExercise(lastCoachExerciseText, lastCoachWeakLetters);
+  else if(practiceMode === 'document') loadDocument(currentDocId);
+  else loadLesson(current);
+};
 document.getElementById('nextBtn').onclick = ()=>{
-  if(practiceMode === 'document') return;
+  if(practiceMode === 'document' || practiceMode === 'coach') return;
   if(!document.getElementById('nextBtn').disabled && current < LESSONS.length - 1) loadLesson(current+1);
 };
 
