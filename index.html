@@ -783,28 +783,29 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
 <div class="brand">
   <div class="brand-left">
     <h1>Tecleo</h1>
-    <span>curso propio de mecanografía · 20 lecciones</span>
+    <span data-i18n="header.subtitle">curso propio de mecanografía · 20 lecciones</span>
   </div>
   <div class="brand-actions">
     <span class="user-chip" id="userChip" hidden></span>
-    <button class="theme-toggle" id="themeToggle">🌙 Modo oscuro</button>
-    <button class="logout-btn" id="feedbackBtn" hidden>📊 Mi progreso</button>
-    <button class="logout-btn" id="coachBtn" hidden>🎯 Coach IA</button>
-    <button class="logout-btn" id="logoutBtn" hidden>Salir</button>
+    <button class="lang-toggle" id="langToggle" type="button">🌐 English</button>
+    <button class="theme-toggle" id="themeToggle" data-i18n="header.darkMode">🌙 Modo oscuro</button>
+    <button class="logout-btn" id="feedbackBtn" hidden data-i18n="header.myProgress">📊 Mi progreso</button>
+    <button class="logout-btn" id="coachBtn" hidden data-i18n="header.coachAI">🎯 Coach IA</button>
+    <button class="logout-btn" id="logoutBtn" hidden data-i18n="header.logout">Salir</button>
   </div>
 </div>
 
 <div class="layout">
   <nav class="sidebar">
-    <h2>Lecciones</h2>
+    <h2 data-i18n="sidebar.lessons">Lecciones</h2>
     <p class="progress-summary" id="progressSummary" aria-live="polite"></p>
     <ul class="lesson-list" id="lessonList"></ul>
 
-    <h2 style="margin-top:18px;">Documentos de práctica</h2>
-    <p class="progress-summary">Sube un texto propio (.txt o .pdf) y practica con él, con la misma calificación.</p>
+    <h2 style="margin-top:18px;" data-i18n="sidebar.docsTitle">Documentos de práctica</h2>
+    <p class="progress-summary" data-i18n="sidebar.docsDesc">Sube un texto propio (.txt o .pdf) y practica con él, con la misma calificación.</p>
     <div class="doc-upload">
       <input type="file" id="docFileInput" accept=".txt,.pdf,text/plain,application/pdf" hidden>
-      <button type="button" class="reset-btn" id="docUploadBtn" style="width:100%;">＋ Subir documento (.txt o .pdf)</button>
+      <button type="button" class="reset-btn" id="docUploadBtn" style="width:100%;" data-i18n="sidebar.uploadBtn">＋ Subir documento (.txt o .pdf)</button>
       <p class="doc-upload-msg" id="docUploadMsg"></p>
     </div>
     <ul class="lesson-list" id="docList"></ul>
@@ -823,8 +824,8 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
         <div class="progress-row">
           <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
           <div class="progress-pct" id="progressPct">0%</div>
-          <button class="pause-btn" id="pauseBtn" disabled>Ⅱ Pausar</button>
-          <button class="reset-btn" id="resetBtn">↺ Reiniciar lección</button>
+          <button class="pause-btn" id="pauseBtn" disabled data-i18n="practice.pause">Ⅱ Pausar</button>
+          <button class="reset-btn" id="resetBtn" data-i18n="practice.reset">↺ Reiniciar lección</button>
         </div>
 
         <div class="type-field-shell">
@@ -832,34 +833,34 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
             <span id="textDisplay"></span>
             <input class="hidden-input" id="hiddenInput" autocomplete="off" autocapitalize="off" spellcheck="false">
           </div>
-          <div class="pause-overlay" id="pauseOverlay">Pausado</div>
+          <div class="pause-overlay" id="pauseOverlay" data-i18n="practice.pausedOverlay">Pausado</div>
         </div>
-        <p class="hint" id="hintText">Haz clic en el recuadro y empieza a escribir. El renglón activo se desplazará como un karaoke.</p>
+        <p class="hint" id="hintText" data-i18n="practice.hintDefault">Haz clic en el recuadro y empieza a escribir. El renglón activo se desplazará como un karaoke.</p>
 
         <div class="result" id="resultBox">
           <div class="msg" id="resultMsg"></div>
           <div class="btnrow">
-            <button id="retryBtn">Reintentar</button>
-            <button class="primary" id="nextBtn">Siguiente lección →</button>
+            <button id="retryBtn" data-i18n="practice.retry">Reintentar</button>
+            <button class="primary" id="nextBtn" data-i18n="practice.next">Siguiente lección →</button>
           </div>
         </div>
 
         <div class="keyboard">
-          <h4>Teclado guía</h4>
+          <h4 data-i18n="practice.keyboardTitle">Teclado guía</h4>
           <div id="kbRows"></div>
-          <p class="finger-note" id="fingerNote">Coloca los índices en <b>F</b> y <b>J</b> para empezar.</p>
+          <p class="finger-note" id="fingerNote" data-i18n="practice.fingerNoteDefault">Coloca los índices en <b>F</b> y <b>J</b> para empezar.</p>
         </div>
       </div>
-      <aside class="stats-column" aria-label="Estadísticas de la práctica">
-        <h4>Rendimiento</h4>
+      <aside class="stats-column" aria-label="Estadísticas de la práctica" data-i18n-attr-aria-label="practice.statsAriaLabel">
+        <h4 data-i18n="practice.performance">Rendimiento</h4>
         <div class="stats">
           <div class="keycap"><div class="val" id="statPPM">0</div><span class="lbl">PPM</span></div>
-          <div class="keycap"><div class="val" id="statAcc">100%</div><span class="lbl">Nota</span></div>
-          <div class="keycap"><div class="val" id="statErr">0</div><span class="lbl">Errores</span></div>
-          <div class="keycap"><div class="val" id="statErrorRate">0.0%</div><span class="lbl">Error</span></div>
-          <div class="keycap"><div class="val" id="statWords">0</div><span class="lbl">Palabras</span></div>
-          <div class="keycap"><div class="val" id="statChars">0</div><span class="lbl">Caracteres</span></div>
-          <div class="keycap"><div class="val" id="statTime">0:00</div><span class="lbl">Tiempo</span></div>
+          <div class="keycap"><div class="val" id="statAcc">100%</div><span class="lbl" data-i18n="practice.grade">Nota</span></div>
+          <div class="keycap"><div class="val" id="statErr">0</div><span class="lbl" data-i18n="practice.errors">Errores</span></div>
+          <div class="keycap"><div class="val" id="statErrorRate">0.0%</div><span class="lbl" data-i18n="practice.error">Error</span></div>
+          <div class="keycap"><div class="val" id="statWords">0</div><span class="lbl" data-i18n="practice.words">Palabras</span></div>
+          <div class="keycap"><div class="val" id="statChars">0</div><span class="lbl" data-i18n="practice.chars">Caracteres</span></div>
+          <div class="keycap"><div class="val" id="statTime">0:00</div><span class="lbl" data-i18n="practice.time">Tiempo</span></div>
         </div>
       </aside>
     </div>
@@ -869,12 +870,12 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
 <div class="auth-overlay" id="authOverlay">
   <form class="auth-card" id="loginForm">
     <div class="auth-icon">⌨</div>
-    <h2>Bienvenido a Tecleo</h2>
-    <p>Inicia sesión con tu correo y contraseña. Tu progreso se guarda en la nube (Supabase) y te sigue en cualquier navegador o dispositivo.</p>
-    <label>Correo electrónico<input id="emailInput" type="email" autocomplete="email" maxlength="35" required></label>
-    <label>Contraseña<input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required></label>
-    <p class="auth-message" id="authMessage">Inicia sesión con tu correo electrónico</p>
-    <button class="primary auth-submit" type="submit">Entrar</button>
+    <h2 data-i18n="auth.welcome">Bienvenido a Tecleo</h2>
+    <p data-i18n="auth.description">Inicia sesión con tu correo y contraseña. Tu progreso se guarda en la nube (Supabase) y te sigue en cualquier navegador o dispositivo.</p>
+    <label><span data-i18n="auth.emailLabel">Correo electrónico</span><input id="emailInput" type="email" autocomplete="email" maxlength="35" required></label>
+    <label><span data-i18n="auth.passwordLabel">Contraseña</span><input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required></label>
+    <p class="auth-message" id="authMessage" data-i18n="auth.defaultMessage">Inicia sesión con tu correo electrónico</p>
+    <button class="primary auth-submit" type="submit" data-i18n="auth.submit">Entrar</button>
   </form>
 </div>
 
@@ -884,7 +885,7 @@ body:not(.light) .key{background:linear-gradient(180deg,#fff,#eff0f0);color:#2f3
     <div class="auth-card-scroll" style= "max-height:92vh;overflow-y:auto;padding:30px;text-align:left;">
       <div class="auth-icon">📊</div>
       <h2>Mi progreso</h2>
-      <p>Un desglose completo de tu práctica: velocidad, precisión, errores por letra, intentos por lección y el detalle de cada una de las 21 lecciones.</p>
+      <p>Un desglose completo de tu práctica: velocidad, precisión, errores por letra, intentos por lección y el detalle de cada una de las 20 lecciones.</p>
       <div id="feedbackContent"></div>
     </div>
   </div>
@@ -971,13 +972,13 @@ x:"ñu regulares lugar usarse seguridad asegurar sugiere fuera guardar sufre usa
   {t:"Repaso de Q, O y P", d:"Más palabras con Q, O y P combinadas con lo aprendido.",
    x:"la españa que deseo es hija de dios para llegar lejos pero lejos el pequeño esperado puede pasar por los dedos del asilo hola si eres ñoño eres ruidoso pero rojillo apropiado para querer queso poder opera hoja quiso querido poesia pequeño pequeña quejosa soplo quiero quepo poseer queso reposa ropa sopa hijo oro oso olor sopor loro poro opio reposo propio grupo puro duro furioso glorioso poroso dolor sopla apaña quilo prisa sirope espera espero oiga oigas quiera iguala igualo iguales aguja gorro agujero requiere resguardo pausa pausas prosa porque aqueos poder opera hoja quiso querido poesia pequeño pequeña quejosa soplo quiero quepo poseer queso reposa ropa sopa hijo oro oso olor sopor loro poro opio reposo propio grupo puro duro furioso glorioso poroso la españa que deseo es hija de dios para llegar lejos pero lejos el pequeño esperado puede pasar por los dedos del asilo hola si eres ñoño eres ruidoso pero rojillo apropiado para querer queso dolor sopla prisa sirope espera espero oiga oigas quiera iguala igualo iguales aguja gorro agujero quilo requiere resguardo pausa pausas prosa porque aqueos furoso polda kojo peligrosa podera porro sorega poder opera hoja quiso querido poesia pequeño pequeña quejosa soplo apaña quiero kojera quepo poseer queso reposa ropa sopa hijo oro oso olor sopor loro poro opio reposo propio grupo puro duro furioso glorioso poroso dolor sopla prisa sirope espera espero oiga oigas quiera iguala igualo iguales aguja gorro agujero requiere resguardo pausa pausas prosa porque aqueos poker furoso girarse polka hurofa kojera puresa hierdo podera porra sosiega la españa que deseo es hija de dios para llegar lejos pero lejos el pequeño esperado puede pasar por los dedos del asilo hola si eres ñoño eres ruidoso pero rojillo apropiado para querer queso"},
   {t:"Teclas C, M y N", d:"Baja los dedos a la fila inferior para alcanzar C, M y N.",
-   x:"complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa dcd dcd dcd dcd jmj jmj jmj jmj jnj jnj jnj jnj dcd jmj jnj dcd jmj jnj dcd jmj jnj dcd jmj jnj dcd jmj jnj camino caminos mano manos come comen cine cines moneda monedas camisa camisas nunca monje monjes menor menores mucho muchos canoa canoas maquina maquinas cocina cocinas camion camiones marco marca marcas negocio negocios comercio comercios camara camaras candado candados camada camadas comodo comodos macana macanudo maniqui mecanico mecanicos mecanica cadena cadenas comedia comedias camarada camaradas mecanismo mecanismos calmado calmada calmados manejo maneja manejan colegio colegios dominio dominios camino caminar caminando dc cd dc cd dc cd jm mj jm mj jm mj jn nj jn nj jn nj dc jm jn dc jm jn dc jm jn dc km jn dc jm jn complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa mensaje comedores camaras candados camadas comodos macana macanudo campos comando comercios muchacho muchacha muchachos camino menciona menciones camisola marcador marcadores camaleon camaleones comodidad comodidades comedido comedida comisario comisaria mecanografia mecanografias misa misas cadejo oscuro camila nacaso minaje sarcasmo ricardo milagro concera nomina dracula picas modelar camara salame complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa cdc dcdcd sdcdcds asdcdcdsa mjm jmjmj kjmjmjk lkjmjmjkl njn jnjnj kjnjnjk lkjnjnjkl cdc mjm njn cdc mjm njn cdc mjm njn cdc mkm njn"},
+   x:"complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa dcd dcd dcd dcd kmk kmk kmk kmk jnj jnj jnj jnj dcd kmk jnj dcd kmk jnj dcd kmk jnj dcd kmk jnj dcd kmk jnj camino caminos mano manos come comen cine cines moneda monedas camisa camisas nunca monje monjes menor menores mucho muchos canoa canoas maquina maquinas cocina cocinas camion camiones marco marca marcas negocio negocios comercio comercios camara camaras candado candados camada camadas comodo comodos macana macanudo maniqui mecanico mecanicos mecanica cadena cadenas comedia comedias camarada camaradas mecanismo mecanismos calmado calmada calmados manejo maneja manejan colegio colegios dominio dominios camino caminar caminando dc cd dc cd dc cd km mk km mk km mk jn nj jn nj jn nj dc km jn dc km jn dc km jn dc km jn dc km jn complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa mensaje comedores camaras candados camadas comodos macana macanudo campos comando comercios muchacho muchacha muchachos camino menciona menciones camisola marcador marcadores camaleon camaleones comodidad comodidades comedido comedida comisario comisaria mecanografia mecanografias misa misas cadejo oscuro camila nacaso minaje sarcasmo ricardo milagro concera nomina dracula picas modelar camara salame complace muchos marcados como marcada comercial compiladores comunes creamos modificar cargamos mucha modificarlo campo comandos comedor mesa camisa cdc dcdcd sdcdcds asdcdcdsa mkm kmkmk lkmkmkl ñlkmkmklñ njn jnjnj kjnjnjk lkjnjnjkl cdc mkm njn cdc mkm njn cdc mkm njn cdc mkm njn"},
   {t:"Repaso de C, M y N", d:"Consolida C, M y N en palabras y frases cortas.",
    x:"conseguido funciones considere principal coincidencia referencia incluso conocer seleccionas opciones comandos reduciendo funcionara recuerden mencionar significa modificando necesarias compilar america camino caminos mano manos come comen cine cines moneda monedas camisa camisas marco marca negocio comercio camara candado camada comodo macana mecanico cadena comedia camarada mecanismo calmado manejo colegio dominio caminar caminando manejan comedores camaleon comodidad marcador muchacho comisario mecanografia considera considerar principios principales referencias referida coincidencias coincide sugerencias sugerido opciones opcional comandos comando reduce reducida funciones funcional recuerda recordamos menciona mencionan significan significado modifico necesaria compila compilado americano america funcionan conseguido conseguida conocido conocidas seleccionado seleccion incluida incluidos reduccion referido conseguido funciones considere principal coincidencia referencia incluso conocer sugerencia seleccionas opciones comandos reduciendo funcionara recuerden mencionar significa modificando necesarias compilar america camino caminos mano manos comen cines monedas camisa marco marca negocio comercio camara candado camada comodo macana mecanico cadena comedia camarada mecanismo calmado manejo colegio  dominio caminar caminando manejan comedores camaleon comodidad marcador comisario mecanografia  principales conocer conocemos sugerido sugerimos opcion reducimos funcionamos recordado recordar modificado compilador compiladores americana coincidimos referenciado incluimos considerando reduciendo conociendo mencionando refiriendo considere principal coincidencia referencia incluso conocer sugerencia comandos funcionara recuerden mencionar significa  minaje sarcasmo ricardo milagro concera nomina dracula pila salame  nominal madero fornicar refugio sencilla conseguido funciones considere principal coincidencia referencia incluso conocer sugerencia seleccionas opciones comandos reduciendo funcionara recuerden mencionar significa modificando necesarias compilar america"},
   {t:"Teclas T, V y B", d:"T se alcanza desde la fila superior; V y B desde la fila inferior.",
    x:"vista provisto convertir visitar obtuvo visualmente motivos provenientes contuviese evita operativo evitando convierte evento productividad vitales virtudes privado eventos ventaja evitarse significativos propio reversa tft tft tft tft fvf fvf fvf fvf fbf fbf fbf fbf tft fvf fbf tft fvf fbf tft fvf fbf tft fvf fbf vida vidas bota botas tarde tardes vivo vivos banco bancos trabajo trabajos verbo verbos buena buenas vamos tiempo tiempos bravo bravos visita visitas verdad verdades batido batidos vestido vestidos abierto abiertos batalla botella botellas motivo motivos activo activos sensible sensibles positivo positivos negativo deportivo deportivos vientre vientres batir batido comentario comentarios argumento argumentos tf ft tf ft tf ft vf fv vf fv vf fv bf fb bf fb bf fb tf vf bf tf vf bf tf vf bf tf vf bf vista provisto convertir visitar obtuvo visualmente motivos provenientes contuviese evita operativo evitando convierte evento productividad vitales virtudes privado eventos ventaja evitarse significativos propio reversa gobierno cobertura coberturas movimiento movimientos actividad actividades transporte transportes argumento argumentos comentario comentarios decisivo decisivos vitamina variable variables volumenes vertical verticales convierte convierten obtuvo obtiene visita visitan operativa operativos productivo productivos ventajas ventajoso significativo evitado evitados privados eventual eventuales reversible reversibles propios propia volcan tolva bacteria veni timbola velcro batido vista provisto convertir visitar obtuvo visualmente motivos provenientes contuviese evita operativo evitando convierte evento productividad vitales virtudes privado eventos ventaja evitarse significativos propio reversa tftf dtftd sdtftds asdtftdsa vfvf dvfvd sdvfvds asdvfvdsa bfbf dbfbd sdbfbds asdbfbdsa tftf vfvf bfbf tftf vfvf bfbf tftf vfvf bfbf"},
   {t:"Repaso de T, V y B", d:"Refuerza T, V y B con vocabulario variado.",
-   x:"habitualmente sustituciones biblioteca libertad invaluables abrevia obtuvo convertir visitar visualmente motivo evitar operativo convierte evento ventaja objeto tablas estaba vida bota tarde banco trabajo verbo buena vamos tiempo bravo visita verdad batido vestido abierto batalla botella motivo activo sensible positivo negativo deportivo vientre comentario argumento gobierno cobertura movimiento actividad transporte vitamina variable volumen vertical batir vidas botas tardes vivos bancos trabajos verbos buenas batidos abiertos batallas botellas activos objetivos habitual habituales sustituir sustituto biblioteca librerias libertades invaluable variabilidad convertido obtuve visitado motivado ventajas objetos tablas estabas convierta habitualmente sustituciones biblioteca libertad invaluables abrevia obtuvo vista provisto convertir visitar visualmente proveniente evitar operativo convierte evento ventaja objeto tablas estaba vida bota tarde banco verbo buena tiempo bravo visita verdad batido abierto batalla botella motivo activo sensible positivo negativo deportivo vientre comentario argumento gobierno cobertura movimiento actividad transporte variable buenas visitas verdades batidos vestidos abiertos batallas botellas activos convierten obtiene visitan operativa ventajoso privados reversible propios estable establecido tablero tableros estableceria obtienes provienen sustituida libertario habituado sensibles positivos negativos deportivos vientres comentarios argumentos gobiernos coberturas movimientos actividades transportes vitaminas variables volumenes tabaco habitualmente sustituciones biblioteca libertad invaluables abrevia obtuvo vista provisto convertir visitar visualmente motivo proveniente evitar operativo convierte ventaja objeto tablas estaba"},
+   x:"habitualmente sustituciones biblioteca libertad invaluables variables abrevia obtuvo vista provisto convertir visitar visualmente motivo proveniente evitar operativo convierte evento ventaja objeto tablas estaba vida bota tarde vivo banco trabajo verbo buena vamos tiempo bravo visita verdad batido vestido abierto batalla botella motivo activo sensible positivo negativo deportivo vientre comentario argumento gobierno cobertura movimiento actividad transporte vitamina variable volumen vertical batir vidas botas tardes vivos bancos trabajos verbos buenas visitas batidos vestidos abiertos batallas botellas motivos activos objetivo objetivos habitual habituales sustituir sustituto biblioteca librerias libertades invaluable variabilidad convertido obtuve visitado motivado eventos ventajas objetos tablas estabas convierta habitualmente sustituciones biblioteca libertad invaluables variables abrevia obtuvo vista provisto convertir visitar visualmente motivo proveniente evitar operativo convierte evento ventaja objeto tablas estaba vida bota tarde vivo banco trabajo verbo buena vamos tiempo bravo visita verdad batido vestido abierto batalla botella motivo activo sensible positivo negativo deportivo vientre comentario argumento gobierno cobertura movimiento actividad transporte variable buenas visitas verdades batidos vestidos abiertos batallas botellas motivos activos convierten obtiene visitan operativa productivo ventajoso privados eventual reversible propios estable establece establecido tablero tableros estableceria obtienes provienen proviene provienen  sustituida libertario habituado sensibles positivos negativos deportivos vientres comentarios argumentos gobiernos coberturas movimientos actividades transportes vitaminas variables volumenes tabaco habitualmente sustituciones biblioteca libertad invaluables variables abrevia obtuvo vista provisto convertir visitar visualmente motivo proveniente evitar operativo convierte evento ventaja objeto tablas estaba"},
   {t:"Teclas Z y Y", d:"Z se escribe con el meñique izquierdo; Y con el índice derecho.",
    x:"centralizada rodriguez interfaz realizado utilizar vez garantizo muy voy ayudase cuyo estoy hayan bytes copyright incluya mayor realizadas capaz familiarizado zip actualizarte empezaron zopilote aza aza aza aza jyj jyj jyj jyj aza jyj aza jyj aza jyj aza jyj aza jyj aza jyj aza jyj aza jyj zapato zapatos playa playas quizas mayoria trayecto bizcocho azul diez belleza mezcla brazo brazos cabeza cabezas empieza empiezan zumo zumbido azucar zanahoria hoy voy muy soy doy estoy hay haya hayan cayo cayeron mayor rayo rayos payaso yoga yema zorro zorros zorra zorras zumos mezclas bellezas cabezal playazo yeguada rayuela mayordomo az za az za az za jy yj jy yj jy yj az jy az jy az jy az jy az jy az jy az jy az jy centralizada rodriguez interfaz realizado utilizar vez garantizo muy voy ayudase cuyo estoy hayan bytes copyright incluya mayor realizadas capaz familiarizado zip actualizarte empezaron zopilote realiza realizan utiliza utilizan garantiza garantizan capacidad capacidades interfaz vezes garantizada realizador realizados utilizados capacitado zonas zonificado ayudar ayudante ayudantes hayamos rayado rayada cayado empezar empezado familiarizar familiarizada centralizado interfaces bytes copyrighted realizamos utilizado utilizados garantizado zippers zetas yeguas playero yudoka mayores hoyos ayudados zorrillo playudo copyrights centralizada rodriguez interfaz realizado utilizar vez garantizo muy voy ayudase cuyo estoy hayan bytes copyright incluya mayor realizadas capaz familiarizado zip actualizarte empezaron zopilote azaz dazad sdazads asdazadsa jyjy kjyjk lkjyjkl ñlkjyjklñ azaz jyjy azaz jyjy azaz jyjy azaz jyjy azaz jyjy"},
   {t:"Repaso de Z y Y", d:"Más práctica con Z y Y en contexto.",
@@ -991,9 +992,7 @@ x:"ñu regulares lugar usarse seguridad asegurar sugiere fuera guardar sufre usa
   {t:"Tildes, comas, puntos y mayúsculas", d:"Ahora se suman los acentos, la puntuación y las letras mayúsculas.",
    x:"El águila vuela sobre el río, mientras José observa la escena. ¿Vendrás mañana? ¡Qué día tan hermoso! María preparó café y pan para todos. Andrés llegó tarde a la reunión, pero nadie se molestó por eso. ¿Trajiste los documentos? Necesitamos revisarlos antes del mediodía, por favor. La señora López compró frutas frescas en el mercado: manzanas, peras y también algunos plátanos maduros. ¿Cuántos años tiene tu hermano menor? Según recuerdo, cumplió veintitrés en agosto, justo antes del viaje a México. El médico recomendó descanso, hidratación y una dieta equilibrada; también sugirió evitar el café por unos días. ¡Increíble! Nunca había visto una puesta de sol tan hermosa como la de ayer en la playa. Verónica estudió toda la noche para el examen de química, aunque al final estaba muy nerviosa. ¿Podrías ayudarme con esta caja? Pesa más de lo que pensaba y no puedo levantarla sola. El niño preguntó: «¿Por qué el cielo es azul?», y su papá intentó explicárselo con paciencia. La función comienza a las ocho en punto; te recomiendo llegar unos minutos antes para conseguir buen asiento. Óscar terminó su proyecto justo a tiempo, después de trabajar varias noches sin descanso alguno. ¡Cuidado con el escalón! Está un poco resbaladizo después de la lluvia de esta mañana. La abuela contaba historias fascinantes sobre su niñez en un pueblito cerca del río Ñuble. ¿Ya firmaste el contrato? El abogado dijo que debíamos entregarlo antes del viernes próximo. Gabriel y Sofía viajarán a España en diciembre para visitar a sus tíos y primos. La conferencia sobre economía comenzó con un análisis detallado del último trimestre; los asistentes tomaban notas constantemente. ¿Recuerdas dónde dejamos las llaves? Creo que las vi cerca de la puerta principal, junto al florero azul. Después del almuerzo, Raúl propuso caminar hasta el parque para aprovechar el buen clima de la tarde. La profesora explicó, con mucha calma, por qué era importante revisar cada respuesta antes de entregar el examen."},
   {t:"Números y símbolos especiales", d:"Practica cifras y símbolos frecuentes en textos reales.",
-   x:"1234567890 - 25% de descuento, codigo #A452, correo ejemplo@mail.com, referencia (2026), total: $350.75; ¿confirmas el pedido? ¡Gracias! El vuelo 4521 sale a las 14:30 desde la puerta B12; el equipaje no debe superar los 23 kg. Factura #98214: 3 unidades a $15.50 c/u, subtotal $46.50, impuesto 12% = $5.58, total = $52.08. Llama al 8888-4321 antes de las 6:00 pm o escribe a soporte@empresa.com para más información. La contraseña temporal es Ab12#Xy9! y debe cambiarse antes del 15/08/2026 por seguridad. En el año 2025 la empresa reportó un crecimiento del 18.5%, comparado con el 12.3% del año anterior. El apartamento 304-B cuesta $850 al mes, más $45 de mantenimiento y $30 de estacionamiento. Coordenadas aproximadas: 12.1364° N, 86.2514° O — revisa el mapa #7 para más detalles. El descuento aplica solo con el cupón VERANO25 y compras mayores a $100.00 antes de impuestos. Reserva confirmada: 2 adultos + 1 niño, habitación #205, check-in 20/07 y check-out 25/07. El termómetro marcaba 38.5°C a las 3:00 pm, un récord para un 19 de julio. Serie de producción #A-2026-0091; peso neto: 1.5 kg; código de barras: 750103458210. Envía el archivo final antes del 30/09 a las 11:59 pm; usa el asunto [URGENTE] en el correo. El interés anual es del 4.75%, con cuotas mensuales de $215.30 durante 36 meses. Marca *123# desde tu celular para consultar tu saldo, o llama gratis al 800-555-0199. El saldo actual es de $1,245.60 y el pago mínimo vence el 05/09 a las 11:59 pm. Actualiza tu perfil con el código de verificación #6390 antes de que expire en 10 minutos. La reunión #48 quedó programada para el 02/10 a las 09:15 am en la sala 3. El nuevo modelo cuesta $1,099.99 e incluye garantía de 2 años y envío gratis a partir de $50. El código promocional EXTRA10 aplica solo entre el 01/08 y el 15/08, hasta agotar existencias."},
-  {t:"Extra: teclas propias de MacBook", d:"Lección adicional para quien viene de un teclado Windows: vocabulario de las teclas propias del teclado de Mac (Command, Option, Control y Fn).",
-   x:"capslock puerto pantallazo mission escape gnwñ pantalla cargador menu aplicacion uylew pantalla function cargador control ñdrcp control dock sqwbta bateria fmfy control xsuz hñzye mission ixznyo sbñesh bzbdf cursor ppsf eyghyg volumen tñbuce waqrw mission mkdpl finder escape sistema command soltar puerto puerto pulsar delete trke waijl brillo cargador teclado command dictado arrastrar function dock ñwdi conexion return control silencio kbsmp qmopc ñorc return volumen conexion command pulsar option tab escape dvosm gaieyd qpdxs escape menu dock delete spotlight option teclado captura captura fhas ikfynr adaptador ikdn atajo brillo adaptador adaptador zqulgt ltdcp eqeg kbtq pantallazo silencio brillo fwdba adaptador sistema dictado return zbwd finder pantalla sjwe mantener cursor cursor preferencias lbsg volumen dictado jbqzuñ vdhhñ libg onds wwdñv atajo rhuy adaptador arrastrar mxinf soltar joymge mantener capslock function mantener xujy gstñ tab ijocf pmfqk volumen ventana kqxse ojeia sistema option menu puerto delete ktqq function conexion iwtfñr xtpza pantallazo wxhur perñu silencio lqhis tab mission bkpf conexion option arrastrar dictado menu captura bateria svshqw boton boton suxp ñlñw atajo ntysq boton odtqh mission escape puerto opjeh cargador control hkvo sxnikc okmbv ebam command boton conexion lñty pantalla silencio mantener preferencias qxhg preferencias zmqv teclado soltar silencio nkrd dlañq option atajo ventana bluetooth pantalla command soltar zyhm pulsar volumen arrastrar function soltar finder teclado bateria cargador boton buajek finder kzkf arrastrar bujñxo xthm brillo biccf bluetooth spotlight biwx sistema spotlight mmyny fvlgv tqiht dock imdxdw soltar ywqmaq pantallazo aplicacion bluetooth epmml xprg menu sistema return spotlight aplicacion pkuly boton dictado brillo bluetooth rtlvz jliis ñmñjn aplicacion capslock delete captura pantallazo preferencias bluetooth tab capslock spotlight rldnwd teclado wkqbq qyhcte captura pulsar zaah xrioz dock dock pulsar finder vqdi obhxty ezfot rcjfn ejvwh gecda tab escape mantener mdñb axño ñvhret ventana epri bateria return ventana atajo preferencias cursor ventana dcññi capslock delete dpwxee sistema luuy cursor bluetooth aplicacion eszvo bateria silencio"}
+   x:"1234567890 - 25% de descuento, codigo #A452, correo ejemplo@mail.com, referencia (2026), total: $350.75; ¿confirmas el pedido? ¡Gracias! El vuelo 4521 sale a las 14:30 desde la puerta B12; el equipaje no debe superar los 23 kg. Factura #98214: 3 unidades a $15.50 c/u, subtotal $46.50, impuesto 12% = $5.58, total = $52.08. Llama al 8888-4321 antes de las 6:00 pm o escribe a soporte@empresa.com para más información. La contraseña temporal es Ab12#Xy9! y debe cambiarse antes del 15/08/2026 por seguridad. En el año 2025 la empresa reportó un crecimiento del 18.5%, comparado con el 12.3% del año anterior. El apartamento 304-B cuesta $850 al mes, más $45 de mantenimiento y $30 de estacionamiento. Coordenadas aproximadas: 12.1364° N, 86.2514° O — revisa el mapa #7 para más detalles. El descuento aplica solo con el cupón VERANO25 y compras mayores a $100.00 antes de impuestos. Reserva confirmada: 2 adultos + 1 niño, habitación #205, check-in 20/07 y check-out 25/07. El termómetro marcaba 38.5°C a las 3:00 pm, un récord para un 19 de julio. Serie de producción #A-2026-0091; peso neto: 1.5 kg; código de barras: 750103458210. Envía el archivo final antes del 30/09 a las 11:59 pm; usa el asunto [URGENTE] en el correo. El interés anual es del 4.75%, con cuotas mensuales de $215.30 durante 36 meses. Marca *123# desde tu celular para consultar tu saldo, o llama gratis al 800-555-0199. El saldo actual es de $1,245.60 y el pago mínimo vence el 05/09 a las 11:59 pm. Actualiza tu perfil con el código de verificación #6390 antes de que expire en 10 minutos. La reunión #48 quedó programada para el 02/10 a las 09:15 am en la sala 3. El nuevo modelo cuesta $1,099.99 e incluye garantía de 2 años y envío gratis a partir de $50. El código promocional EXTRA10 aplica solo entre el 01/08 y el 15/08, hasta agotar existencias."}
 ];
 
 /* ---------------- Finger / key mapping ---------------- */
@@ -1132,7 +1131,7 @@ let currentDashboardLessonIndex = null;
 let attemptsHistory = {};
 let ppmHistory = [];
 
-// Documentos de práctica propios (subidos por el usuario), separados de las 21 lecciones.
+// Documentos de práctica propios (subidos por el usuario), separados de las 20 lecciones.
 let practiceMode = 'lesson'; // 'lesson' | 'document'
 let currentDocId = null;
 let documents = {};                 // { docId: { name, content, addedAt } }
@@ -1584,7 +1583,7 @@ function renderCoachFingerBars(fingerRates){
   }).join('');
 }
 
-// Busca palabras reales (ya usadas en las 21 lecciones oficiales) que contengan
+// Busca palabras reales (ya usadas en las 20 lecciones oficiales) que contengan
 // alguna de las letras débiles, para mezclarlas con drills de dedos.
 function findRealWordsWithLetters(letters, minLen, max){
   const letterSet = new Set(letters);
@@ -1682,7 +1681,7 @@ function loadCoachExercise(text, weakLetters){
     : 'Repaso general (todavía no hay suficientes datos de error para personalizarlo más).';
   document.getElementById('resultBox').classList.remove('show');
   hintText.classList.remove('error');
-  hintText.textContent = `${exerciseLines.length} renglones · Ejercicio generado por el coach, no forma parte de las 21 lecciones. Esc para pausar.`;
+  hintText.textContent = `${exerciseLines.length} renglones · Ejercicio generado por el coach, no forma parte de las 20 lecciones. Esc para pausar.`;
   document.getElementById('nextBtn').hidden = true;
   pauseBtn.disabled = true;
   pauseBtn.textContent = 'Ⅱ Pausar';
@@ -2307,7 +2306,7 @@ function loadLesson(i){
   hiddenInput.focus({preventScroll:true});
 }
 
-// Practicar con un documento propio (subido por el usuario), en vez de una de las 21 lecciones.
+// Practicar con un documento propio (subido por el usuario), en vez de una de las 20 lecciones.
 // Reutiliza exactamente el mismo motor de escritura y la misma calificación.
 function loadDocument(docId){
   const doc = documents[docId];
@@ -2319,7 +2318,7 @@ function loadDocument(docId){
   lastActiveLine = -1;
   prepareExercise(doc.content);
   document.getElementById('lessonTitle').textContent = `📄 ${doc.name}`;
-  document.getElementById('lessonDesc').textContent = 'Documento de práctica propio (no forma parte de las 21 lecciones oficiales).';
+  document.getElementById('lessonDesc').textContent = 'Documento de práctica propio (no forma parte de las 20 lecciones oficiales).';
   document.getElementById('resultBox').classList.remove('show');
   hintText.classList.remove('error');
   hintText.textContent = `${exerciseLines.length} renglones · Nota mínima para "aprobar": 90 (informativo, no bloquea nada). Esc para pausar.`;
